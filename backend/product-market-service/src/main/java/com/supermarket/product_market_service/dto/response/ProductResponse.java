@@ -1,4 +1,4 @@
-package com.transportation.product.dto.response;
+package com.supermarket.product_market_service.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,6 +18,11 @@ public class ProductResponse {
     String name;
     String description;
     BigDecimal price;
+    String productCode;
+    int stockQuantity;
+    String categoryId;
+    String imageUrl;
+
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

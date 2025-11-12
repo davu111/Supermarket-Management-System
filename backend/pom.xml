@@ -1,0 +1,13 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.supermarket</groupId>
+    <artifactId>supermarket-system</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>product-market-service</module>
+        <module>api-gateway-supermarket</module>
+
+    </modules>
+</project>

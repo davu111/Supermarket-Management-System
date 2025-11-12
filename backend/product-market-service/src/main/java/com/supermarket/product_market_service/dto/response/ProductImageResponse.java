@@ -1,6 +1,5 @@
-package com.transportation.product.dto.response;
+package com.supermarket.product_market_service.dto.response;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

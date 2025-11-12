@@ -1,8 +1,7 @@
-package com.transportation.product.dto.request;
+package com.supermarket.product_market_service.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
 

@@ -1,8 +1,8 @@
-package com.transportation.product.service;
+package com.supermarket.product_market_service.service;
 
-import com.transportation.product.dto.response.ProductImageResponse;
-import com.transportation.product.mapper.ProductImageMapper;
-import com.transportation.product.repository.ProductImageRepository;
+import com.supermarket.product_market_service.dto.response.ProductImageResponse;
+import com.supermarket.product_market_service.mapper.ProductImageMapper;
+import com.supermarket.product_market_service.repository.ProductImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

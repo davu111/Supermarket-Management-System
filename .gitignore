@@ -62,11 +62,23 @@ pnpm-debug.log*
 **/.docker/
 **/.env.docker
 **/.dockerignore
+*.sdi
 
 # Docker build artifacts
 **/*.pid
 **/*.tar
 **/*.bak
+
+### Docker ###
+# Bỏ qua toàn bộ file và thư mục Docker
+docker/
+Dockerfile
+Dockerfile.*
+.dockerignore
+
+volume-data/
+
+
 
 # ======================================
 # IntelliJ IDEA

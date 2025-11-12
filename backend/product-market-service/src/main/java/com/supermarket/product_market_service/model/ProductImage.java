@@ -1,4 +1,4 @@
-package com.transportation.product.model;
+package com.supermarket.product_market_service.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

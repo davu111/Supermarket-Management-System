@@ -1,8 +1,8 @@
-package com.transportation.product.mapper;
+package com.supermarket.product_market_service.mapper;
 
-import com.transportation.product.dto.request.ProductRequest;
-import com.transportation.product.dto.response.ProductResponse;
-import com.transportation.product.model.Product;
+import com.supermarket.product_market_service.dto.request.ProductRequest;
+import com.supermarket.product_market_service.dto.response.ProductResponse;
+import com.supermarket.product_market_service.model.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 

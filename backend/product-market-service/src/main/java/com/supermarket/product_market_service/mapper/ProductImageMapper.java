@@ -1,7 +1,7 @@
-package com.transportation.product.mapper;
+package com.supermarket.product_market_service.mapper;
 
-import com.transportation.product.dto.response.ProductImageResponse;
-import com.transportation.product.model.ProductImage;
+import com.supermarket.product_market_service.dto.response.ProductImageResponse;
+import com.supermarket.product_market_service.model.ProductImage;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

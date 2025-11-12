@@ -1,7 +1,11 @@
-package com.transportation.product.model;
+package com.supermarket.product_market_service.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,15 +15,19 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "CHAR(36)")
-    private String id;
-    private String name;
-    private String description;
-    private BigDecimal price;
+    String id;
+    String name;
+    String description;
+    BigDecimal price;
+    String productCode;
+    int stockQuantity;
+    String categoryId;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 }

@@ -1,8 +1,8 @@
-package com.transportation.product.service;
+package com.supermarket.product_market_service.service;
 
-import com.transportation.product.dto.response.ProductImageResponse;
-import com.transportation.product.model.ProductImage;
-import com.transportation.product.repository.ProductImageRepository;
+import com.supermarket.product_market_service.dto.response.ProductImageResponse;
+import com.supermarket.product_market_service.model.ProductImage;
+import com.supermarket.product_market_service.repository.ProductImageRepository;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;

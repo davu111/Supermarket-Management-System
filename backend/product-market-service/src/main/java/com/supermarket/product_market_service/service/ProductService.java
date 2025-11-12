@@ -1,10 +1,10 @@
-package com.transportation.product.service;
+package com.supermarket.product_market_service.service;
 
-import com.transportation.product.dto.request.ProductRequest;
-import com.transportation.product.dto.response.ProductResponse;
-import com.transportation.product.mapper.ProductMapper;
-import com.transportation.product.model.Product;
-import com.transportation.product.repository.ProductRepository;
+import com.supermarket.product_market_service.dto.request.ProductRequest;
+import com.supermarket.product_market_service.dto.response.ProductResponse;
+import com.supermarket.product_market_service.mapper.ProductMapper;
+import com.supermarket.product_market_service.model.Product;
+import com.supermarket.product_market_service.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final MinioService minioService;
 
     // CREATE
     public ProductResponse createProduct(ProductRequest request) {
@@ -73,17 +74,14 @@ public class ProductService {
         log.info("Product delete successfully");
     }
 
-    /// STAGE 1 ONLY ///
-    public ResponseEntity<List<ProductResponse>> getProducts_Stage1(
-             Map<String, Set<String>> request) {
+    // GET PRODUCT AND CREATE IMG URL BY PRODUCT CODE
+    public ProductResponse getByProductCode(String productCode) {
+        Product product = productRepository.findByProductCode(productCode);
 
-        Set<String> productIds = request.get("productIds");
-        List<Product> products = productRepository.findByIdIn(productIds);
+        ProductResponse response = productMapper.toProductResponse(product);
+        String imageUrl = minioService.getImageUrl(product.getId());
+        response.setImageUrl(imageUrl);
 
-        List<ProductResponse> responses = products.stream()
-                .map(productMapper::toProductResponse)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(responses);
+        return response;
     }
 }
