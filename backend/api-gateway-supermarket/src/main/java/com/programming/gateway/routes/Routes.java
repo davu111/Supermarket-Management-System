@@ -17,4 +17,11 @@ public class Routes {
                 .route(RequestPredicates.path("/api/products/**"), HandlerFunctions.http("http://localhost:8080"))
                 .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> couponService() {
+        return GatewayRouterFunctions.route("coupon-service")
+                .route(RequestPredicates.path("/api/coupons/**"), HandlerFunctions.http("http://localhost:8081"))
+                .build();
+    }
 }

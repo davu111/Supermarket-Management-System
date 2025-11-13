@@ -84,4 +84,12 @@ public class ProductService {
 
         return response;
     }
+
+    // GET LIST PRODUCTS BY IDS
+    public List<ProductResponse> getByProductIds(List<String> productIds) {
+        List<Product> products = productRepository.findByIdIn(productIds);
+        return products.stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
+    }
 }

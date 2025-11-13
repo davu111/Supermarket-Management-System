@@ -60,6 +60,7 @@ const POSCheckout = () => {
       setCartItems([
         ...cartItems,
         {
+          id: product.id,
           code: productCode,
           name: product.name,
           price: product.price,
@@ -102,26 +103,22 @@ const POSCheckout = () => {
       return;
     }
 
-    // API: POST /api/discounts/calculate
-    // Body: { items: cartItems, subtotal: calculateSubtotal() }
-    // Response: { discounts: [{ type, name, amount }], total }
+    try {
+      // Gọi API tính toán giảm giá
+      const response = await axios.post("/coupons/apply", {
+        productIds: cartItems.map((item) => item.id),
+        totalAmount: calculateSubtotal(),
+      });
 
-    // Mock discounts
-    const mockDiscounts = [
-      { type: "combo", name: "Combo sữa + bánh mì", amount: 5000 },
-      { type: "total", name: "Giảm 10% hóa đơn trên 100k", amount: 10000 },
-    ];
+      const discounts = response.data;
 
-    setAppliedDiscounts(mockDiscounts);
-    setShowPaymentModal(true);
-  };
-
-  const getTotalDiscount = () => {
-    return appliedDiscounts.reduce((sum, d) => sum + d.amount, 0);
-  };
-
-  const getFinalTotal = () => {
-    return calculateSubtotal() - getTotalDiscount();
+      // ✅ Đảm bảo luôn set dữ liệu sau khi nhận được
+      setAppliedDiscounts(discounts);
+      setShowPaymentModal(true);
+    } catch (error) {
+      console.error("Lỗi khi tính giảm giá:", error);
+      alert("Không thể tính giảm giá. Vui lòng thử lại sau!");
+    }
   };
 
   const handleQRPayment = () => {
@@ -161,11 +158,12 @@ const POSCheckout = () => {
   };
 
   const handleFinish = () => {
+    setShowInvoiceModal(false);
+    setShowPaymentModal(false);
     setCartItems([]);
     setAppliedDiscounts([]);
     setCustomerName("");
     setPaymentMethod("");
-    setShowInvoiceModal(false);
     inputRef.current?.focus();
   };
 
@@ -313,7 +311,7 @@ const POSCheckout = () => {
               disabled={cartItems.length === 0}
               className="px-12 py-4 bg-white text-red-600 rounded-xl hover:bg-red-50 transition font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
-              Thanh Toán
+              Checkout
             </button>
           </div>
         </div>
@@ -355,12 +353,13 @@ const POSCheckout = () => {
                   </div>
                 </div>
 
-                {appliedDiscounts.length > 0 && (
+                {appliedDiscounts?.coupons?.length > 0 && (
                   <div className="bg-green-50 p-3 rounded-lg space-y-2">
+                    {console.log(appliedDiscounts)}
                     <p className="text-xs font-semibold text-green-700 mb-2">
                       Mã giảm giá áp dụng:
                     </p>
-                    {appliedDiscounts.map((discount, idx) => (
+                    {appliedDiscounts.coupons.map((discount, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
                         <span className="text-green-700">{discount.name}</span>
                         <span className="text-green-700 font-semibold">
@@ -377,7 +376,9 @@ const POSCheckout = () => {
                       Tổng thanh toán
                     </span>
                     <span className="text-2xl font-bold text-red-600">
-                      {getFinalTotal().toLocaleString("vi-VN")}đ
+                      {appliedDiscounts?.finalTotal?.toLocaleString("vi-VN") ||
+                        0}
+                      đ
                     </span>
                   </div>
                 </div>
@@ -438,7 +439,7 @@ const POSCheckout = () => {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Tổng thanh toán:</span>
                   <span className="font-semibold text-red-600">
-                    {getFinalTotal().toLocaleString("vi-VN")}đ
+                    {appliedDiscounts.finalTotal.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -519,7 +520,7 @@ const POSCheckout = () => {
                   <span>Tạm tính:</span>
                   <span>{calculateSubtotal().toLocaleString("vi-VN")}đ</span>
                 </div>
-                {appliedDiscounts.map((discount, idx) => (
+                {appliedDiscounts.coupons.map((discount, idx) => (
                   <div
                     key={idx}
                     className="flex justify-between text-green-600"
@@ -534,7 +535,7 @@ const POSCheckout = () => {
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-lg">Tổng cộng:</span>
                   <span className="font-bold text-2xl text-red-600">
-                    {getFinalTotal().toLocaleString("vi-VN")}đ
+                    {appliedDiscounts.finalTotal.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
                 <div className="flex justify-between text-sm mt-2">

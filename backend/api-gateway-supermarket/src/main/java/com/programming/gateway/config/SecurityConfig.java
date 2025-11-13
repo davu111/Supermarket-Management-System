@@ -28,7 +28,7 @@ import java.io.IOException;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {
-            "/api/products/**",
+            "/api/products/**", "api/coupons/**"
     };
 
     @Value("${frontend.url}")

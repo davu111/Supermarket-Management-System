@@ -8,6 +8,6 @@
     <modules>
         <module>product-market-service</module>
         <module>api-gateway-supermarket</module>
-
+        <module>coupon-market-service</module>
     </modules>
 </project>
