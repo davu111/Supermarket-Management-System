@@ -1,8 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import "./index.css";
-import POSCheckout from "./pages/staff/POSCheckout";
+
 import LoginPage from "./pages/all/LoginPage";
 import ProtectedRoute from "./pages/all/ProtectedRoute";
+import POSCheckout from "./pages/cashier/POSCheckout";
+import Catalog from "./pages/warehouse/Catalog";
 
 function App() {
   return (
@@ -14,6 +16,14 @@ function App() {
         element={
           <ProtectedRoute requiredRole="CASHIER">
             <POSCheckout />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/warehouse"
+        element={
+          <ProtectedRoute requiredRole="WAREHOUSE">
+            <Catalog />
           </ProtectedRoute>
         }
       />

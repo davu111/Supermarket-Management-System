@@ -80,6 +80,8 @@ export const AuthProvider = ({ children }) => {
         navigate("/cash");
       } else if (roles.includes("MANAGER") || roles.includes("manager")) {
         navigate("/admin");
+      } else if (roles.includes("WAREHOUSE") || roles.includes("warehouse")) {
+        navigate("/warehouse");
       }
     }
   };
@@ -215,6 +217,10 @@ export const AuthProvider = ({ children }) => {
     return roles.includes("CASHIER") || roles.includes("cashier");
   };
 
+  const isWarehouse = () => {
+    return roles.includes("WAREHOUSE") || roles.includes("warehouse");
+  };
+
   const value = {
     authenticated,
     loading,
@@ -232,6 +238,7 @@ export const AuthProvider = ({ children }) => {
     keycloak,
     initKeycloak,
     isInitialized,
+    isWarehouse,
     dataLoaded, // Export để có thể check ở component khác nếu cần
   };
 

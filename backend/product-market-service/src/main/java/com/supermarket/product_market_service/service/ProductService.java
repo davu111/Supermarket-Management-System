@@ -28,6 +28,7 @@ public class ProductService {
     public ProductResponse createProduct(ProductRequest request) {
         Product product = productMapper.toProduct(request);
         product.setCreatedAt(LocalDateTime.now());
+        product.setUpdatedAt(LocalDateTime.now());
 
         productRepository.save(product);
 

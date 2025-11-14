@@ -14,4 +14,6 @@ public class ProductRequest {
     String name;
     String description;
     BigDecimal price;
+    String productCode;
+    String categoryId;
 }

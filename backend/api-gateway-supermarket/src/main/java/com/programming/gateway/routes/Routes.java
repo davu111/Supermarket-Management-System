@@ -15,6 +15,10 @@ public class Routes {
     public RouterFunction<ServerResponse> productService() {
         return GatewayRouterFunctions.route("product-service")
                 .route(RequestPredicates.path("/api/products/**"), HandlerFunctions.http("http://localhost:8080"))
+                .route(RequestPredicates.path("/api/categories/**"), HandlerFunctions.http("http://localhost:8080"))
+                .filter((request, next) -> {
+                    return next.handle(request);
+                })
                 .build();
     }
 

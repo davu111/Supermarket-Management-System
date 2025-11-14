@@ -28,20 +28,16 @@ import java.io.IOException;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {
-            "/api/products/**", "api/coupons/**"
+            "/api/products/getByProductCode/**",
+            "/api/products/getListProducts/**",
+            "/api/products/*",
+            "/api/products/all",
+            "/api/products/images/**",
+            "/api/coupons/**"
     };
 
     @Value("${frontend.url}")
     private String frontendUrl;
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-//        return httpSecurity.authorizeHttpRequests(authorize -> authorize.anyRequest()
-//                .permitAll())
-//                .cors(Customizer.withDefaults())        // Bat CORS
-//                .csrf(AbstractHttpConfigurer::disable)  // Tat CSRF
-//                .build();
-//    }
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -64,7 +60,7 @@ public class SecurityConfig {
         return httpSecurity
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
-//                        .anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 )
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
