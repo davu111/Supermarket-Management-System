@@ -23,6 +23,8 @@ public class ProductResponse {
     String categoryId;
     String imageUrl;
 
+    boolean deleted;
+
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

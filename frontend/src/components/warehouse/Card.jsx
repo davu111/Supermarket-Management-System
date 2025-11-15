@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Edit3, Trash2, Loader2, ImageOff } from "lucide-react";
+import { Edit3, EyeIcon, EyeOff, Loader2, ImageOff } from "lucide-react";
 import axios from "../../contexts/axios";
 
-function Card({ item, onClick, setIsDelete, setIsUpdate, setItem }) {
+function Card({
+  item,
+  onClick,
+  setIsDelete,
+  setIsUnDelete,
+  setIsUpdate,
+  setItem,
+}) {
   const [img, setImg] = useState(null);
   const [imgLoading, setImgLoading] = useState(true);
 
@@ -37,6 +44,7 @@ function Card({ item, onClick, setIsDelete, setIsUpdate, setItem }) {
           {imgLoading ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <Loader2 className="w-10 h-10 text-indigo-400 animate-spin" />
+              {console.log(item.deleted)}
             </div>
           ) : img ? (
             <>
@@ -46,10 +54,10 @@ function Card({ item, onClick, setIsDelete, setIsUpdate, setItem }) {
                 transition={{ duration: 0.1 }}
                 src={img}
                 alt={item.name}
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover ${
+                  item.deleted ? "grayscale" : "grayscale-0"
+                }`}
               />
-              {/* Gradient Overlay on Hover */}
-              {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-100" /> */}
             </>
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -72,21 +80,25 @@ function Card({ item, onClick, setIsDelete, setIsUpdate, setItem }) {
                 setIsUpdate(true);
                 setItem(item);
               }}
-              className="p-2.5 bg-linear-to-br from-amber-600 to-orange-500 text-white rounded-full shadow-lg hover:shadow-xl backdrop-blur-sm"
+              className="p-2.5 bg-linear-to-br from-amber-600 to-orange-500 text-white rounded-full shadow-lg hover:shadow-xl backdrop-blur-sm cursor-pointer"
             >
-              <Edit3 className="w-4 h-4 hover:cursor-pointer" />
+              <Edit3 className="w-4 h-4" />
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
               onClick={(e) => {
                 e.stopPropagation();
-                setIsDelete(true);
+                item.deleted ? setIsUnDelete(true) : setIsDelete(true);
                 setItem(item);
               }}
-              className="p-2.5 bg-linear-to-br from-red-700 to-rose-600 text-white rounded-full shadow-lg hover:shadow-xl backdrop-blur-sm"
+              className="p-2.5 bg-linear-to-br from-red-700 to-rose-600 text-white rounded-full shadow-lg hover:shadow-xl backdrop-blur-sm cursor-pointer"
             >
-              <Trash2 className="w-4 h-4 hover:cursor-pointer" />
+              {item.deleted ? (
+                <EyeIcon className="w-4 h-4" />
+              ) : (
+                <EyeOff className="w-4 h-4" />
+              )}
             </motion.button>
           </motion.div>
 

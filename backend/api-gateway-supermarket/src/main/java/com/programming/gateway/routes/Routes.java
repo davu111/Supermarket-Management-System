@@ -28,4 +28,24 @@ public class Routes {
                 .route(RequestPredicates.path("/api/coupons/**"), HandlerFunctions.http("http://localhost:8081"))
                 .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> warehouseService() {
+        return GatewayRouterFunctions.route("warehouse-service")
+                .route(RequestPredicates.path("/api/warehouses/**"), HandlerFunctions.http("http://localhost:8082"))
+                .filter((request, next) -> {
+                    return next.handle(request);
+                })
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> inventoryService() {
+        return GatewayRouterFunctions.route("inventory-service")
+                .route(RequestPredicates.path("/api/inventory/**"), HandlerFunctions.http("http://localhost:8080"))
+                .filter((request, next) -> {
+                    return next.handle(request);
+                })
+                .build();
+    }
 }

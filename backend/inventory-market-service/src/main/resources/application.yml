@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: inventory_market_service
+  datasource:
+    name: inventory_market_service
+    url: jdbc:mysql://localhost:3334/inventory_market_service
+    username: root
+    password: mysql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+    ddl-auto: none
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/spring-microservices
+          jwk-set-uri: http://localhost:8181/realms/spring-microservices/protocol/openid-connect/certs
+server:
+  port: 8083

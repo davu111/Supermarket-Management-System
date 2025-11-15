@@ -28,6 +28,8 @@ public class Product {
     int stockQuantity;
     String categoryId;
 
+    boolean deleted;
+
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

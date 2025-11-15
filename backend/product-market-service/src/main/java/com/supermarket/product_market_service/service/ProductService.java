@@ -29,6 +29,7 @@ public class ProductService {
         Product product = productMapper.toProduct(request);
         product.setCreatedAt(LocalDateTime.now());
         product.setUpdatedAt(LocalDateTime.now());
+        product.setDeleted(false);
 
         productRepository.save(product);
 
@@ -70,9 +71,21 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
 
-        productRepository.delete(product);
+        product.setDeleted(true);
+        productRepository.save(product);
 
         log.info("Product delete successfully");
+    }
+
+    // UNDO DELETE
+    public void unDeleteProduct(String id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        product.setDeleted(false);
+        productRepository.save(product);
+
+        log.info("Product undo delete successfully");
     }
 
     // GET PRODUCT AND CREATE IMG URL BY PRODUCT CODE

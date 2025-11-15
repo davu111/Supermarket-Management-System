@@ -63,6 +63,13 @@ public class ProductController {
         productService.deleteProduct(id);
     }
 
+    @PreAuthorize("hasRole('WAREHOUSE')")
+    @DeleteMapping("/unDelete/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void unDeleteProduct(@PathVariable String id) {
+        productService.unDeleteProduct(id);
+    }
+
     @GetMapping("/images/{productId}")
     @ResponseStatus(HttpStatus.OK)
     public String getProductImages(@PathVariable String productId) {
