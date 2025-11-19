@@ -1,12 +1,11 @@
-package com.transportation.inventory.controller;
+package com.supermarket.inventory.controller;
 
-import com.transportation.inventory.dto.request.InventoryTransactionRequest;
-import com.transportation.inventory.dto.response.InventoryTransactionResponse;
-import com.transportation.inventory.model.InventoryTransaction;
-import com.transportation.inventory.service.InventoryTransactionService;
+import com.supermarket.inventory.dto.request.InventoryTransactionRequest;
+import com.supermarket.inventory.dto.response.InventoryTransactionResponse;
+import com.supermarket.inventory.model.InventoryTransaction;
+import com.supermarket.inventory.service.InventoryTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -46,27 +45,13 @@ public class InventoryTransactionController {
         return ResponseEntity.ok(responses);
     }
 
-    /**
-     * Lấy lịch sử giao dịch theo warehouse
-     */
-    @GetMapping("/warehouse/{warehouseId}")
-    public ResponseEntity<List<InventoryTransaction>> getWarehouseHistory(
-            @PathVariable String warehouseId) {
-
-        List<InventoryTransaction> history =
-                inventoryTransactionService.getTransactionHistory(warehouseId);
-
-        return ResponseEntity.ok(history);
-    }
-
     // Lay lich su giao dich theo ngay va theo warehouse
     @GetMapping("/getAllGrouped")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<LocalDate, Map<String, List<InventoryTransaction>>>>
+    public ResponseEntity<Map<LocalDate, List<InventoryTransaction>>>
     getAllGroupedByDateAndWarehouse(@RequestParam(required = false) LocalDate startDate,
                                     @RequestParam(required = false) LocalDate endDate) {
-        Map<LocalDate, Map<String, List<InventoryTransaction>>> responses =
-                inventoryTransactionService.groupTransactionsByDateAndWarehouse(startDate, endDate);
+        Map<LocalDate, List<InventoryTransaction>> responses =
+                inventoryTransactionService.groupTransactionsByDate(startDate, endDate);
         return ResponseEntity.ok(responses);
     }
 }

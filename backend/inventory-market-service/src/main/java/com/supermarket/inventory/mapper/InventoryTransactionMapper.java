@@ -1,16 +1,10 @@
-package com.transportation.inventory.mapper;
+package com.supermarket.inventory.mapper;
 
-import com.transportation.inventory.dto.request.InventoryTransactionRequest;
-import com.transportation.inventory.dto.response.InventoryTransactionResponse;
-import com.transportation.inventory.enums.TransactionType;
-import com.transportation.inventory.model.InventoryTransaction;
+import com.supermarket.inventory.dto.request.InventoryTransactionRequest;
+import com.supermarket.inventory.dto.response.InventoryTransactionResponse;
+import com.supermarket.inventory.model.InventoryTransaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface InventoryTransactionMapper {

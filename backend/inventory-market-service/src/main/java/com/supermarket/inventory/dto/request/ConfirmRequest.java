@@ -1,4 +1,4 @@
-package com.transportation.inventory.dto.request;
+package com.supermarket.inventory.dto.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

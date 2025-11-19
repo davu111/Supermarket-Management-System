@@ -25,7 +25,7 @@ public class Product {
     String description;
     BigDecimal price;
     String productCode;
-    int stockQuantity;
+    int stockQuantity; // Co the khong can
     String categoryId;
 
     boolean deleted;

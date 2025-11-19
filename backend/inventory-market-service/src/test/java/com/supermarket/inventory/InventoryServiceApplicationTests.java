@@ -1,4 +1,4 @@
-package com.transportation.inventory;
+package com.supermarket.inventory;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

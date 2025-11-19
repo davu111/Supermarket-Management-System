@@ -1,4 +1,4 @@
-package com.transportation.inventory.model;
+package com.supermarket.inventory.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +14,11 @@ public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-    String sourceId; //ORDER ID, WAREHOUSE ID
+    String sourceId; //ORDER ID
+
+    @Enumerated(EnumType.STRING) // Lưu trữ giá trị enum dưới dạng chuỗi
+    @Column(nullable = false)
+    SourceType sourceType;
     String productId;
 
     @Column(nullable = false)

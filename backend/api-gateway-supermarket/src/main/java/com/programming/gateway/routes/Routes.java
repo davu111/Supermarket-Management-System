@@ -42,7 +42,7 @@ public class Routes {
     @Bean
     public RouterFunction<ServerResponse> inventoryService() {
         return GatewayRouterFunctions.route("inventory-service")
-                .route(RequestPredicates.path("/api/inventory/**"), HandlerFunctions.http("http://localhost:8080"))
+                .route(RequestPredicates.path("/api/inventory/**"), HandlerFunctions.http("http://localhost:8083"))
                 .filter((request, next) -> {
                     return next.handle(request);
                 })

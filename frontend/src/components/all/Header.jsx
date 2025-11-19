@@ -8,6 +8,7 @@ import {
   BarChart3,
   Settings,
   Menu,
+  ArrowRightLeft,
   X,
 } from "lucide-react";
 
@@ -26,8 +27,13 @@ const Header = ({ currentPage = "pos", menu }) => {
     },
     {
       label: "Transaction",
-      icon: Package,
+      icon: ArrowRightLeft,
       path: "/warehouse/transactions",
+    },
+    {
+      label: "History",
+      icon: History,
+      path: "/warehouse/history",
     },
   ];
 

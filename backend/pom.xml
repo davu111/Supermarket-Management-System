@@ -9,7 +9,6 @@
         <module>product-market-service</module>
         <module>api-gateway-supermarket</module>
         <module>coupon-market-service</module>
-        <module>warehouse-market-service</module>
         <module>inventory-market-service</module>
     </modules>
 </project>

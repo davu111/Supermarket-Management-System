@@ -14,7 +14,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8181/realms/spring-microservices
-          jwk-set-uri: http://localhost:8181/realms/spring-microservices/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8181/realms/supermarket-management-system
+          jwk-set-uri: http://localhost:8181/realms/supermarket-management-system/protocol/openid-connect/certs
 server:
   port: 8083

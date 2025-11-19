@@ -1,31 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Plus,
-  Edit3,
   ArrowDownToLine,
   ArrowUpFromLine,
-  Trash2,
-  ChevronDown,
   Package,
   ArrowUpDown,
   Loader2,
 } from "lucide-react";
-import axios from "../contexts/axios";
+import axios from "../../contexts/axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import WarehouseHeader from "../components/WarehouseHeader";
-import PopUpWarehouse from "../components/PopUpWarehouse";
-import PopUp from "../components/PopUp";
-import TransactionWarehouse from "../components/TransactionWarehouse";
+import TransactionWarehouse from "../../components/warehouse/TransactionWarehouse";
+import Header from "../../components/all/Header";
 
 function Transaction() {
-  const [warehouses, setWarehouses] = useState([]);
-  const [warehouseId, setWarehouseId] = useState("");
   const [products, setProducts] = useState([]);
-  const [warehouseOpen, setWarehouseOpen] = useState(false);
-  const [warehouseUpdate, setWarehouseUpdate] = useState(false);
   const [transactionOpen, setTransactionOpen] = useState(false);
   const [transactionType, setTransactionType] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -38,31 +28,11 @@ function Transaction() {
   const cols = ["ID", "Name", "Quantity"];
   const colKeyMap = ["id", "name", "quantity"];
 
-  // Lấy danh sách kho
-  const fetchWarehouses = useCallback(async () => {
-    try {
-      const res = await axios.get(`/warehouses/all-names`);
-      const data = Object.entries(res.data).map(([id, name]) => ({
-        id,
-        name,
-      }));
-      setWarehouses(data);
-      if (data.length > 0) setWarehouseId(data[0].id);
-    } catch (err) {
-      console.error("Failed to fetch warehouses", err);
-      toast.error("Failed to load warehouses");
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchWarehouses();
-  }, [fetchWarehouses]);
-
   // Lấy inventory khi warehouseId thay đổi
   const fetchInventory = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`/inventory/${warehouseId}`, {
+      const res = await axios.get(`/inventory/getInventory`, {
         params: { sortBy: sortConfig.key, direction: sortConfig.direction },
       });
       setProducts(res.data);
@@ -75,9 +45,8 @@ function Transaction() {
   };
 
   useEffect(() => {
-    if (!warehouseId) return;
     fetchInventory();
-  }, [warehouseId, sortConfig]);
+  }, [sortConfig]);
 
   const handleSort = (key) => {
     setSortConfig((prev) => ({
@@ -86,34 +55,7 @@ function Transaction() {
     }));
   };
 
-  const handleDelete = () => {
-    axios
-      .delete(`/warehouses/delete/${warehouseId}`)
-      .then((response) => {
-        toast.success("Warehouse deleted successfully!");
-        setPopUpDelete(false);
-        fetchWarehouses();
-      })
-      .catch((error) => {
-        toast.error("Failed to delete warehouse!");
-      });
-  };
-
   const actionButtons = [
-    {
-      label: "Add",
-      icon: Plus,
-      onClick: () => setWarehouseOpen(true),
-      linear: "from-indigo-600 to-purple-600",
-      hoverGradient: "from-indigo-700 to-purple-700",
-    },
-    {
-      label: "Change",
-      icon: Edit3,
-      onClick: () => setWarehouseUpdate(true),
-      linear: "from-blue-600 to-cyan-600",
-      hoverGradient: "from-blue-700 to-cyan-700",
-    },
     {
       label: "Import",
       icon: ArrowDownToLine,
@@ -134,47 +76,15 @@ function Transaction() {
       linear: "from-orange-600 to-amber-600",
       hoverGradient: "from-orange-700 to-amber-700",
     },
-    {
-      label: "Delete",
-      icon: Trash2,
-      onClick: () => setPopUpDelete(true),
-      linear: "from-red-600 to-rose-600",
-      hoverGradient: "from-red-700 to-rose-700",
-    },
   ];
 
   return (
     <>
-      <WarehouseHeader title="Table" />
+      <Header currentPage="Transaction" menu="warehouse" />
 
       {/* Control Panel */}
       <div className="p-4 bg-linear-to-br from-gray-50 to-gray-100">
         <div className="max-w-7xl mx-auto">
-          {/* Warehouse Selector */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl shadow-md p-4 mb-4 border-2 border-gray-200"
-          >
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Select Warehouse
-            </label>
-            <div className="relative">
-              <select
-                value={warehouseId}
-                onChange={(e) => setWarehouseId(e.target.value)}
-                className="w-full appearance-none bg-linear-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-lg px-4 py-3 pr-10 text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 cursor-pointer hover:border-indigo-300"
-              >
-                {warehouses.map((w) => (
-                  <option key={w.id} value={w.id}>
-                    {w.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-indigo-600 pointer-events-none" />
-            </div>
-          </motion.div>
-
           {/* Action Buttons */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -233,7 +143,7 @@ function Transaction() {
             </div>
 
             {/* Table Content */}
-            <div className="overflow-x-auto max-h-[calc(100vh-400px)]">
+            <div className="overflow-x-auto max-h-[calc(100vh-200px)]">
               <table className="w-full">
                 <thead className="sticky top-0 bg-linear-to-br from-gray-50 to-gray-100 border-b-2 border-gray-200">
                   <tr>
@@ -335,30 +245,8 @@ function Transaction() {
       </div>
 
       {/* Modals */}
-      {warehouseOpen && (
-        <PopUpWarehouse
-          onClose={() => setWarehouseOpen(false)}
-          onConfirm={() => fetchWarehouses()}
-        />
-      )}
-      {warehouseUpdate && (
-        <PopUpWarehouse
-          warehouseId={warehouseId}
-          onClose={() => setWarehouseUpdate(false)}
-          onConfirm={() => fetchWarehouses()}
-        />
-      )}
-      {isPopUpDelete && (
-        <PopUp
-          title={"Delete Confirm"}
-          message={"Are you sure?"}
-          onClose={() => setPopUpDelete(false)}
-          onConfirm={() => handleDelete()}
-        />
-      )}
       {transactionOpen && (
         <TransactionWarehouse
-          warehouseId={warehouseId}
           onClose={() => setTransactionOpen(false)}
           onConfirm={() => fetchInventory()}
           type={transactionType}

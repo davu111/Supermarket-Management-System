@@ -1,19 +1,19 @@
-package com.transportation.inventory.service;
+package com.supermarket.inventory.service;
 
-import com.transportation.inventory.dto.request.InventoryTransactionRequest;
-import com.transportation.inventory.dto.response.InventoryTransactionResponse;
-import com.transportation.inventory.mapper.InventoryTransactionMapper;
-import com.transportation.inventory.model.Inventory;
-import com.transportation.inventory.model.InventoryTransaction;
-import com.transportation.inventory.repository.InventoryRepository;
-import com.transportation.inventory.repository.InventoryTransactionRepository;
+import com.supermarket.inventory.dto.request.InventoryTransactionRequest;
+import com.supermarket.inventory.dto.response.InventoryTransactionResponse;
+import com.supermarket.inventory.mapper.InventoryTransactionMapper;
+import com.supermarket.inventory.model.Inventory;
+import com.supermarket.inventory.model.InventoryTransaction;
+import com.supermarket.inventory.model.SourceType;
+import com.supermarket.inventory.repository.InventoryRepository;
+import com.supermarket.inventory.repository.InventoryTransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,37 +33,42 @@ public class InventoryTransactionService {
      */
     @Transactional
     public InventoryTransactionResponse transactionInventory(InventoryTransactionRequest request) {
-        log.info("Processing inventory transaction: type={}, warehouseId={}, deliveryPointId={}, productId={}, quantity={}",
-                request.getType(), request.getWarehouseId(), request.getDeliveryPointId(),
-                request.getProductId(), request.getQuantity());
+        log.info("Processing inventory transaction: type={}, productId={}, quantity={}",
+                request.getType(), request.getProductId(), request.getQuantity());
 
         // 1. Validate request
         validateRequest(request);
 
         // 2. Lấy inventory từ warehouse
-        Inventory inventory = getOrCreateInventory(request.getWarehouseId(), request.getProductId());
+        Inventory inventoryWarehouse = getOrCreateInventory(SourceType.WAREHOUSE, request.getProductId());
+        Inventory inventoryShelf = getOrCreateInventory(SourceType.SHELF, request.getProductId());
 
         // 3. Tính toán số lượng mới
-        double oldQuantity = inventory.getQuantity();
-        double newQuantity = calculateNewQuantity(inventory, request);
+        double oldQuantityWarehouse = inventoryWarehouse.getQuantity();
+        double newQuantityWarehouse = calculateNewQuantityForWarehouse(inventoryWarehouse, request);
+        double oldQuantityShelf = inventoryShelf.getQuantity();
+        double newQuantityShelf = calculateNewQuantityForShelf(inventoryShelf, request);
 
         // 4. Validate số lượng
-        if (newQuantity < 0) {
+        if (newQuantityWarehouse < 0) {
             throw new RuntimeException(String.format(
                     "Not enough inventory for product %s. Available: %d, Required: %d",
-                    request.getProductId(), oldQuantity, request.getQuantity()));
+                    request.getProductId(), oldQuantityWarehouse, request.getQuantity()));
         }
 
         // 5. Update inventory
-        inventory.setQuantity(newQuantity);
-        inventoryRepository.save(inventory);
+        inventoryWarehouse.setQuantity(newQuantityWarehouse);
+        inventoryRepository.save(inventoryWarehouse);
+
+        inventoryShelf.setQuantity(newQuantityShelf);
+        inventoryRepository.save(inventoryShelf);
 
         // 6. Tạo transaction history
         InventoryTransaction transaction = inventoryTransactionMapper.toInventoryTransaction(request);
         inventoryTransactionRepository.save(transaction);
 
-//        log.info("Inventory transaction completed: transactionId={}, oldQuantity={}, newQuantity={}",
-//                transaction.getId(), oldQuantity, newQuantity);
+//        log.info("Inventory transaction completed: transactionId={}, oldQuantityWarehouse={}, newQuantityWarehouse={}",
+//                transaction.getId(), oldQuantityWarehouse, newQuantityWarehouse);
 
         // 7. Return response
         return inventoryTransactionMapper.toInventoryTransactionResponse(transaction);
@@ -99,16 +104,10 @@ public class InventoryTransactionService {
         return responses;
     }
 
-    /**
-     * Lấy lịch sử giao dịch theo warehouse
-     */
-    public List<InventoryTransaction> getTransactionHistory(String warehouseId) {
-        return inventoryTransactionRepository.findByWarehouseIdOrderByCreatedAtDesc(warehouseId);
-    }
 
-    // Lich su giao dich theo ngay va theo warehouse
-    public Map<LocalDate, Map<String, List<InventoryTransaction>>>
-    groupTransactionsByDateAndWarehouse(LocalDate startDate, LocalDate endDate) {
+    // Lich su giao dich theo ngay
+    public Map<LocalDate, List<InventoryTransaction>>
+    groupTransactionsByDate(LocalDate startDate, LocalDate endDate) {
         List<InventoryTransaction> transactions = inventoryTransactionRepository.findAll();
 
         // Lọc theo khoảng thời gian nếu có
@@ -122,15 +121,11 @@ public class InventoryTransactionService {
         }
 
         return stream.collect(Collectors.groupingBy(
-                t -> t.getCreatedAt().toLocalDate(), // Group theo ngày
-                Collectors.groupingBy(InventoryTransaction::getWarehouseId) // Group theo warehouse
+                t -> t.getCreatedAt().toLocalDate() // Group theo ngày
         ));
     }
 
     private void validateRequest(InventoryTransactionRequest request) {
-        if (request.getWarehouseId() == null || request.getWarehouseId().isEmpty()) {
-            throw new IllegalArgumentException("Warehouse ID is required");
-        }
         if (request.getProductId() == null || request.getProductId().isEmpty()) {
             throw new IllegalArgumentException("Product ID is required");
         }
@@ -142,24 +137,36 @@ public class InventoryTransactionService {
         }
     }
 
-    private Inventory getOrCreateInventory(String warehouseId, String productId) {
-        return inventoryRepository.findBySourceIdAndProductId(warehouseId, productId)
+    private Inventory getOrCreateInventory(SourceType sourceType, String productId) {
+        return inventoryRepository.findBySourceTypeAndProductId(sourceType, productId)
                 .orElseGet(() -> {
                     Inventory newInventory = new Inventory();
-                    newInventory.setSourceId(warehouseId);
+                    newInventory.setSourceId(null);
                     newInventory.setProductId(productId);
+                    newInventory.setSourceType(sourceType);
                     newInventory.setQuantity(0.0);
                     return inventoryRepository.save(newInventory);
                 });
     }
 
-    private double calculateNewQuantity(Inventory inventory, InventoryTransactionRequest request) {
+    private double calculateNewQuantityForWarehouse(Inventory inventory, InventoryTransactionRequest request) {
         double currentQuantity = inventory.getQuantity();
         double transactionQuantity = request.getQuantity();
 
         return switch (request.getType()) {
             case EXPORT -> currentQuantity - transactionQuantity;
             case IMPORT -> currentQuantity + transactionQuantity;
+            default -> throw new IllegalArgumentException("Invalid transaction type: " + request.getType());
+        };
+    }
+
+    private double calculateNewQuantityForShelf(Inventory inventory, InventoryTransactionRequest request) {
+        double currentQuantity = inventory.getQuantity();
+        double transactionQuantity = request.getQuantity();
+
+        return switch (request.getType()) {
+            case EXPORT -> currentQuantity + transactionQuantity;
+            case IMPORT -> currentQuantity;
             default -> throw new IllegalArgumentException("Invalid transaction type: " + request.getType());
         };
     }

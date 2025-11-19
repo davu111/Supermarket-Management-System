@@ -1,6 +1,6 @@
-package com.transportation.inventory.model;
+package com.supermarket.inventory.model;
 
-import com.transportation.inventory.enums.TransactionType;
+import com.supermarket.inventory.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +21,6 @@ public class InventoryTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String warehouseId;
-    String deliveryPointId;
     String orderId;
     String productId;
 

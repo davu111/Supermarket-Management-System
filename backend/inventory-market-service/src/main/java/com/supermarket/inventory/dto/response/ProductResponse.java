@@ -1,4 +1,4 @@
-package com.transportation.inventory.dto.response;
+package com.supermarket.inventory.dto.response;
 
 import lombok.Data;
 import lombok.experimental.FieldDefaults;

@@ -1,4 +1,4 @@
-package com.transportation.inventory.config;
+package com.supermarket.inventory.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {
-
+        "/api/inventory/test-auth"
     };
 
     @Bean
@@ -29,6 +29,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
+                        .requestMatchers("/api/inventory/**").hasRole("WAREHOUSE")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

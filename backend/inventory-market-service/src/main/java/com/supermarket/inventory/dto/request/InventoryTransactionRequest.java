@@ -1,13 +1,11 @@
-package com.transportation.inventory.dto.request;
+package com.supermarket.inventory.dto.request;
 
-import com.transportation.inventory.enums.TransactionType;
+import com.supermarket.inventory.enums.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Map;
 
 @Data
 @Builder
@@ -15,8 +13,6 @@ import java.util.Map;
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class InventoryTransactionRequest {
-    String warehouseId;
-    String deliveryPointId;
     String orderId;
     String productId;
     Double quantity;

@@ -1,8 +1,7 @@
-package com.transportation.inventory.mapper;
+package com.supermarket.inventory.mapper;
 
-import com.transportation.inventory.dto.response.InventoryStage1Response;
-import com.transportation.inventory.dto.response.InventoryResponse;
-import com.transportation.inventory.model.Inventory;
+import com.supermarket.inventory.dto.response.InventoryResponse;
+import com.supermarket.inventory.model.Inventory;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,6 +12,4 @@ public interface InventoryMapper {
     @Mapping(target = "productName", ignore = true)
     @Mapping(target = "price", ignore = true)
     InventoryResponse toInventoryResponse(Inventory inventory);
-
-    InventoryStage1Response toInventoryStage1Response(Inventory inventory);
 }

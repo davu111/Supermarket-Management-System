@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Edit3, EyeIcon, EyeOff, Loader2, ImageOff } from "lucide-react";
+import {
+  Edit3,
+  EyeIcon,
+  EyeOff,
+  Loader2,
+  ImageOff,
+  Package,
+  Warehouse,
+} from "lucide-react";
 import axios from "../../contexts/axios";
 
 function Card({
@@ -13,6 +21,9 @@ function Card({
 }) {
   const [img, setImg] = useState(null);
   const [imgLoading, setImgLoading] = useState(true);
+  const [shelfQuantity, setShelfQuantity] = useState(null);
+  const [warehouseQuantity, setWarehouseQuantity] = useState(null);
+  const [inventoryLoading, setInventoryLoading] = useState(true);
 
   useEffect(() => {
     setImgLoading(true);
@@ -29,6 +40,29 @@ function Card({
       });
   }, [item.id, item.updatedAt]); // Thêm dependency để reload khi product update
 
+  useEffect(() => {
+    // Fetch inventory data
+    const fetchInventory = async () => {
+      setInventoryLoading(true);
+      try {
+        const [shelfRes, warehouseRes] = await Promise.all([
+          axios.get(`/inventory/getInventory/SHELF/${item.id}`),
+          axios.get(`/inventory/getInventory/WAREHOUSE/${item.id}`),
+        ]);
+        setShelfQuantity(shelfRes.data);
+        setWarehouseQuantity(warehouseRes.data);
+      } catch (err) {
+        console.error("Failed to fetch inventory:", err);
+        setShelfQuantity(0);
+        setWarehouseQuantity(0);
+      } finally {
+        setInventoryLoading(false);
+      }
+    };
+
+    fetchInventory();
+  }, [item.id, item.updatedAt]);
+
   return (
     <motion.div
       whileHover={{ y: -8, scale: 1.02 }}
@@ -44,7 +78,6 @@ function Card({
           {imgLoading ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <Loader2 className="w-10 h-10 text-indigo-400 animate-spin" />
-              {console.log(item.deleted)}
             </div>
           ) : img ? (
             <>
@@ -126,24 +159,92 @@ function Card({
             </p>
           )}
 
-          {/* Additional Info */}
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-            <span className="text-xs text-gray-400">ID: {item.id}</span>
+          {/* Inventory Info */}
+          <div className="mt-3 space-y-2">
+            {inventoryLoading ? (
+              <div className="flex items-center justify-center py-2">
+                <Loader2 className="w-4 h-4 text-red-400 animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {/* Shelf Quantity */}
+                <div
+                  className={`flex items-center gap-2 rounded-lg p-2 transition-colors ${
+                    (shelfQuantity || 0) <= 50.0 ? "bg-red-50" : "bg-green-50"
+                  }`}
+                >
+                  <div
+                    className={`p-1.5 rounded-md ${
+                      (shelfQuantity || 0) <= 50.0
+                        ? "bg-red-100"
+                        : "bg-green-100"
+                    }`}
+                  >
+                    <Package
+                      className={`w-3.5 h-3.5 ${
+                        (shelfQuantity || 0) <= 50.0
+                          ? "text-red-600"
+                          : "text-green-600"
+                      }`}
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-gray-500">Shelf</span>
+                    <span
+                      className={`text-sm font-bold ${
+                        (shelfQuantity || 0) <= 50.0
+                          ? "text-red-700"
+                          : "text-green-700"
+                      }`}
+                    >
+                      {shelfQuantity?.toFixed(1) || "0.0"}
+                    </span>
+                  </div>
+                </div>
 
-            {/* Stock indicator (if available) */}
-            {item.stock !== undefined && (
-              <span
-                className={`text-xs font-medium px-2 py-1 rounded-full ${
-                  item.stock > 10
-                    ? "bg-green-100 text-green-700"
-                    : item.stock > 0
-                    ? "bg-orange-100 text-orange-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {item.stock > 0 ? `${item.stock} left` : "Out of stock"}
-              </span>
+                {/* Warehouse Quantity */}
+                <div
+                  className={`flex items-center gap-2 rounded-lg p-2 transition-colors ${
+                    (warehouseQuantity || 0) <= 50.0
+                      ? "bg-red-50"
+                      : "bg-green-50"
+                  }`}
+                >
+                  <div
+                    className={`p-1.5 rounded-md ${
+                      (warehouseQuantity || 0) <= 50.0
+                        ? "bg-red-100"
+                        : "bg-green-100"
+                    }`}
+                  >
+                    <Warehouse
+                      className={`w-3.5 h-3.5 ${
+                        (warehouseQuantity || 0) <= 50.0
+                          ? "text-red-600"
+                          : "text-green-600"
+                      }`}
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-gray-500">Warehouse</span>
+                    <span
+                      className={`text-sm font-bold ${
+                        (warehouseQuantity || 0) <= 50.0
+                          ? "text-red-700"
+                          : "text-green-700"
+                      }`}
+                    >
+                      {warehouseQuantity?.toFixed(1) || "0.0"}
+                    </span>
+                  </div>
+                </div>
+              </div>
             )}
+          </div>
+
+          {/* Additional Info */}
+          <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
+            <span className="text-xs text-gray-400">ID: {item.id}</span>
           </div>
         </div>
 
