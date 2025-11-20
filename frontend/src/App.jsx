@@ -7,6 +7,7 @@ import POSCheckout from "./pages/cashier/POSCheckout";
 import Catalog from "./pages/warehouse/Catalog";
 import Transaction from "./pages/warehouse/Transaction";
 import TransactionHistory from "./pages/warehouse/TransactionHistory";
+import EmployeeManagement from "./pages/admin/EmployeeManagement";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         path="/warehouse"
         element={<Navigate to="/warehouse/products" />}
       />
+      <Route path="/admin" element={<Navigate to="/admin/employees" />} />
       <Route path="/home" element={<LoginPage />} />
       <Route
         path="/cash"
@@ -50,7 +52,15 @@ function App() {
         }
       />
       <Route
-        path="/admin"
+        path="/admin/employees"
+        element={
+          <ProtectedRoute requiredRole="ADMIN">
+            <EmployeeManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/marketing"
         element={
           <ProtectedRoute requiredRole="MANAGER">
             {/* Your admin component */}

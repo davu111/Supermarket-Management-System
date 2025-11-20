@@ -2,7 +2,7 @@ import axios from 'axios';
 import keycloak from './keycloak';
 
 const api = axios.create({
-  baseURL: 'http://localhost:9000/api', // Thay bằng URL backend của bạn
+  baseURL: 'http://localhost:9000/api',
   headers: {
     'Content-Type': 'application/json',
   },

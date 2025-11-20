@@ -1,11 +1,11 @@
 services:
   mysql:
     image: mysql:8.0.36
-    container_name: product_market_mysql
+    container_name: employee_market_mysql
     environment:
       MYSQL_ROOT_PASSWORD: mysql
     ports:
-      - "3331:3306"
+      - "3335:3306"
     volumes:
       #      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./docker/mysql/product_market_data:/var/lib/mysql
+      - ./docker/mysql/employee_market_data:/var/lib/mysql

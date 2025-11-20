@@ -1,9 +1,9 @@
 spring:
   application:
-    name: product_market_service
+    name: employee_market_service
   datasource:
-    name: product_service
-    url: jdbc:mysql://localhost:3331/product_market_service
+    name: employee_service
+    url: jdbc:mysql://localhost:3335/employee_market_service
     username: root
     password: mysql
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,4 +21,17 @@ spring:
           issuer-uri: http://localhost:8181/realms/supermarket-management-system
           jwk-set-uri: http://localhost:8181/realms/supermarket-management-system/protocol/openid-connect/certs
 server:
-  port: 8080
+  port: 8084
+keycloak:
+  auth-server-url: http://localhost:8181
+  realm: supermarket-management-system
+  resource: react-backend
+  credentials:
+    secret: OL1jXEcGfEySyHDUtCwLfGeEjOf89Y7R
+  admin:
+    username: admin
+    password: admin
+    client-id: admin-cli
+
+cors:
+  allowed-origins: http://localhost:5173

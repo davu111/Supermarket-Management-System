@@ -4,7 +4,7 @@ import Keycloak from 'keycloak-js';
 const keycloakConfig = {
   url: 'http://localhost:8181',
   realm: 'supermarket-management-system',
-  clientId: 'react-client', // Thay bằng client ID của bạn trong Keycloak
+  clientId: 'react-client',
 };
 
 // Tạo instance với cấu hình  

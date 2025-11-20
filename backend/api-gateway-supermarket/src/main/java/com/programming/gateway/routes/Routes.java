@@ -48,4 +48,14 @@ public class Routes {
                 })
                 .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> employeeService() {
+        return GatewayRouterFunctions.route("employee-service")
+                .route(RequestPredicates.path("/api/employees/**"), HandlerFunctions.http("http://localhost:8084"))
+                .filter((request, next) -> {
+                    return next.handle(request);
+                })
+                .build();
+    }
 }

@@ -1,20 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   ShoppingCart,
   Package,
   Receipt,
   History,
   BarChart3,
-  Settings,
+  User,
   Menu,
   ArrowRightLeft,
   X,
+  LogOut,
 } from "lucide-react";
 
 // Simple Header Component
 const Header = ({ currentPage = "pos", menu }) => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -37,8 +40,22 @@ const Header = ({ currentPage = "pos", menu }) => {
     },
   ];
 
+  const adminMenu = [
+    {
+      label: "Employee",
+      icon: User,
+      path: "/admin/employees",
+    },
+    {
+      label: "Report",
+      icon: BarChart3,
+      path: "/admin/reports",
+    },
+  ];
+
   const menuMap = {
     warehouse: warehouseMenu,
+    admin: adminMenu,
     // pos: posMenu,
   };
 
@@ -49,34 +66,50 @@ const Header = ({ currentPage = "pos", menu }) => {
     setIsMobileMenuOpen(false);
   };
 
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
-    <div className="bg-linear-to-br from-red-700 via-red-600 to-red-500 overflow-hidden">
+    <div className="py-2 bg-linear-to-br from-red-700 via-red-600 to-red-500 overflow-hidden">
       <div className="max-w-7xl mx-auto px-2">
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-2 py-1">
-          {items.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentPage === item.label;
+        <div className="hidden md:flex items-center justify-between py-1">
+          {/* Menu trái */}
+          <nav className="flex gap-2">
+            {items.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentPage === item.label;
 
-            return (
-              <button
-                key={item.label}
-                onClick={() => handleNavigation(item)}
-                className={`
-                  flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-200
-                  ${
-                    isActive
-                      ? "bg-white text-red-600 shadow-md"
-                      : "text-white hover:bg-white/10"
-                  }
-                `}
-              >
-                <Icon className="w-5 h-5" />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => handleNavigation(item)}
+                  className={`
+                flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-200
+                ${
+                  isActive
+                    ? "bg-white text-red-600 shadow-md"
+                    : "text-white hover:bg-white/10"
+                }
+              `}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Nút Logout */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-200 text-white hover:bg-white/10 cursor-pointer"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Log Out</span>
+          </button>
+        </div>
 
         {/* Mobile Navigation */}
         <div className="md:hidden">
@@ -110,19 +143,27 @@ const Header = ({ currentPage = "pos", menu }) => {
                     key={item.label}
                     onClick={() => handleNavigation(item)}
                     className={`
-                      w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium
-                      ${
-                        isActive
-                          ? "bg-white text-red-600 shadow-md"
-                          : "text-white hover:bg-white/10"
-                      }
-                    `}
+            w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium
+            ${
+              isActive
+                ? "bg-white text-red-600 shadow-md"
+                : "text-white hover:bg-white/10"
+            }
+          `}
                   >
                     <Icon className="w-5 h-5" />
                     <span>{item.label}</span>
                   </button>
                 );
               })}
+
+              {/* Nút Logout Mobile */}
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-3 rounded-lg text-white hover:bg-white/10 transition"
+              >
+                Đăng xuất
+              </button>
             </div>
           )}
         </div>

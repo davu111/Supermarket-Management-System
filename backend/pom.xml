@@ -10,5 +10,6 @@
         <module>api-gateway-supermarket</module>
         <module>coupon-market-service</module>
         <module>inventory-market-service</module>
+        <module>employee-market-service</module>
     </modules>
 </project>

@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
     ) {
       if (roles.includes("CASHIER") || roles.includes("cashier")) {
         navigate("/cash");
-      } else if (roles.includes("MANAGER") || roles.includes("manager")) {
+      } else if (roles.includes("ADMIN") || roles.includes("admin")) {
         navigate("/admin");
       } else if (roles.includes("WAREHOUSE") || roles.includes("warehouse")) {
         navigate("/warehouse");
