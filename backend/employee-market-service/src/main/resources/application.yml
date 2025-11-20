@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: product_market_service
+  datasource:
+    name: product_service
+    url: jdbc:mysql://localhost:3331/product_market_service
+    username: root
+    password: mysql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+    ddl-auto: none
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/supermarket-management-system
+          jwk-set-uri: http://localhost:8181/realms/supermarket-management-system/protocol/openid-connect/certs
+server:
+  port: 8080
