@@ -58,4 +58,14 @@ public class Routes {
                 })
                 .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> customerService() {
+        return GatewayRouterFunctions.route("customer-service")
+                .route(RequestPredicates.path("/api/customers/**"), HandlerFunctions.http("http://localhost:8085"))
+                .filter((request, next) -> {
+                    return next.handle(request);
+                })
+                .build();
+    }
 }

@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Pencil, Trash2, Plus, X, Save } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Plus,
+  X,
+  Save,
+  KeyRound,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
 import axios from "../../contexts/axios";
 import Header from "../../components/all/Header";
 
@@ -14,6 +24,9 @@ const EmployeeManagement = () => {
     role: "CASHIER",
   });
   const [loading, setLoading] = useState(false);
+  const [showCredentials, setShowCredentials] = useState(false);
+  const [newCredentials, setNewCredentials] = useState(null);
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   const roles = ["CASHIER", "WAREHOUSE", "MARKETING", "ADMIN"];
 
@@ -29,13 +42,30 @@ const EmployeeManagement = () => {
     fetchEmployees();
   }, []);
 
+  // Auto hide toast
+  useEffect(() => {
+    if (toast.show) {
+      const timer = setTimeout(() => {
+        setToast({ show: false, message: "", type: "" });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast.show]);
+
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+  };
+
   const fetchEmployees = async () => {
     setLoading(true);
     try {
       const response = await axios.get("/employees");
       setEmployees(response.data);
     } catch (error) {
-      console.error("Error fetching employees:", error);
+      showToast(
+        error.response?.data?.message || "Unable to load employee list",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -59,13 +89,41 @@ const EmployeeManagement = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) return;
+    if (!window.confirm("Are you sure you want to delete this employee?"))
+      return;
 
     try {
       await axios.delete(`/employees/${id}`);
+      showToast("Employee deleted successfully", "success");
       fetchEmployees();
     } catch (error) {
-      console.error("Error deleting employee:", error);
+      showToast(
+        error.response?.data?.message || "Unable to delete employee",
+        "error"
+      );
+    }
+  };
+
+  const handleResetPassword = async (employee) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to reset the employee's password for "${employee.name}"?`
+      )
+    )
+      return;
+
+    try {
+      const response = await axios.post(
+        `/employees/${employee.id}/reset-password`
+      );
+      setNewCredentials(response.data);
+      setShowCredentials(true);
+      showToast("Password reset successful", "success");
+    } catch (error) {
+      showToast(
+        error.response?.data?.message || "Unable to reset password",
+        "error"
+      );
     }
   };
 
@@ -73,13 +131,27 @@ const EmployeeManagement = () => {
     try {
       if (isEditing) {
         await axios.put(`/employees/${currentEmployee.id}`, currentEmployee);
+        showToast("Employee update successful", "success");
+        setIsModalOpen(false);
+        fetchEmployees();
       } else {
-        await axios.post("/employees", currentEmployee);
-      }
+        const response = await axios.post("/employees", currentEmployee);
+        setIsModalOpen(false);
 
-      setIsModalOpen(false);
-      fetchEmployees();
+        // Fetch credentials for newly created employee
+        const credResponse = await axios.get(
+          `/employees/${response.data.id}/credentials`
+        );
+        setNewCredentials(credResponse.data);
+        setShowCredentials(true);
+        showToast("Create successful employees", "success");
+
+        fetchEmployees();
+      }
     } catch (error) {
+      const message =
+        error.response?.data?.message || error.message || "Have an error";
+      showToast(message, "error");
       console.error("Error saving employee:", error);
     }
   };
@@ -87,6 +159,47 @@ const EmployeeManagement = () => {
   return (
     <>
       <Header currentPage="Employee" menu="admin" />
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed top-4 right-4 z-9999 animate-slide-in">
+          <div
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg ${
+              toast.type === "success"
+                ? "bg-green-50 border border-green-200"
+                : toast.type === "error"
+                ? "bg-red-50 border border-red-200"
+                : "bg-yellow-50 border border-yellow-200"
+            }`}
+          >
+            {toast.type === "success" && (
+              <CheckCircle className="text-green-600" size={20} />
+            )}
+            {toast.type === "error" && (
+              <XCircle className="text-red-600" size={20} />
+            )}
+            {toast.type === "warning" && (
+              <AlertCircle className="text-yellow-600" size={20} />
+            )}
+            <span
+              className={`text-sm font-medium ${
+                toast.type === "success"
+                  ? "text-green-800"
+                  : toast.type === "error"
+                  ? "text-red-800"
+                  : "text-yellow-800"
+              }`}
+            >
+              {toast.message}
+            </span>
+            <button
+              onClick={() => setToast({ show: false, message: "", type: "" })}
+              className="ml-2 text-gray-400 hover:text-gray-600"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-7xl mx-auto">
@@ -165,13 +278,22 @@ const EmployeeManagement = () => {
                           <div className="flex justify-end gap-2">
                             <button
                               onClick={() => handleEdit(employee)}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition cursor-pointer"
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                              title="Chỉnh sửa"
                             >
                               <Pencil size={18} />
                             </button>
                             <button
+                              onClick={() => handleResetPassword(employee)}
+                              className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition"
+                              title="Reset mật khẩu"
+                            >
+                              <KeyRound size={18} />
+                            </button>
+                            <button
                               onClick={() => handleDelete(employee.id)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                              title="Xóa"
                             >
                               <Trash2 size={18} />
                             </button>
@@ -198,7 +320,7 @@ const EmployeeManagement = () => {
             <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
               <div className="flex justify-between items-center p-6 border-b">
                 <h2 className="text-xl font-bold text-gray-900">
-                  {isEditing ? "Chỉnh sửa nhân viên" : "Thêm nhân viên mới"}
+                  {isEditing ? "Edit staff" : "Create new staff"}
                 </h2>
                 <button
                   onClick={() => setIsModalOpen(false)}
@@ -282,6 +404,90 @@ const EmployeeManagement = () => {
                     {isEditing ? "Update" : "Create"}
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Credentials Modal */}
+        {showCredentials && newCredentials && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+              <div className="p-6 border-b">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Login information
+                </h2>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-sm text-green-800 mb-4">
+                    Please save the following login information:
+                  </p>
+
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Employee name
+                      </label>
+                      <div className="bg-white px-3 py-2 rounded border border-gray-300">
+                        <span className="text-sm font-medium">
+                          {newCredentials.name}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Username
+                      </label>
+                      <div className="bg-white px-3 py-2 rounded border border-gray-300">
+                        <span className="text-sm font-mono">
+                          {newCredentials.username}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Password
+                      </label>
+                      <div className="bg-white px-3 py-2 rounded border border-gray-300">
+                        <span className="text-sm font-mono">
+                          {newCredentials.username}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Role
+                      </label>
+                      <div className="bg-white px-3 py-2 rounded border border-gray-300">
+                        <span className="text-sm">
+                          {roleTranslations[newCredentials.role]}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <p className="text-xs text-yellow-800">
+                    <strong>Lưu ý:</strong> This information will only be
+                    displayed once. Please save before closing.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setShowCredentials(false);
+                    setNewCredentials(null);
+                  }}
+                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Information saved
+                </button>
               </div>
             </div>
           </div>

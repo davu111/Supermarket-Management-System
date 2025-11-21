@@ -82,6 +82,8 @@ export const AuthProvider = ({ children }) => {
         navigate("/admin");
       } else if (roles.includes("WAREHOUSE") || roles.includes("warehouse")) {
         navigate("/warehouse");
+      } else if (roles.includes("MARKETING") || roles.includes("marketing")) {
+        navigate("/marketing");
       }
     }
   };

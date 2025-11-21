@@ -1,4 +1,4 @@
-package com.supermarket.product_market_service.config;
+package com.supermarket.customer_market_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,11 +21,6 @@ import java.util.stream.Collectors;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {
-            "/api/products/getByProductCode/**",
-            "/api/products/getListProducts/**",
-            "/api/products/*",
-            "/api/products/all",
-            "/api/products/images/**"
     };
 
     @Bean
@@ -33,7 +28,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
-                        .requestMatchers("/api/categories/**").hasRole("WAREHOUSE")
+                        .requestMatchers("/api/customers/**").hasRole("MARKETING")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

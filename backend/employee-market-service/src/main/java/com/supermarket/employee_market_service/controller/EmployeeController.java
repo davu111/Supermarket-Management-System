@@ -1,5 +1,6 @@
 package com.supermarket.employee_market_service.controller;
 
+import com.supermarket.employee_market_service.dto.response.EmployeeCredentials;
 import com.supermarket.employee_market_service.model.Employee;
 import com.supermarket.employee_market_service.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -27,41 +28,37 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
-        try {
-            Employee employee = employeeService.getEmployeeById(id);
-            return ResponseEntity.ok(employee);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        Employee employee = employeeService.getEmployeeById(id);
+        return ResponseEntity.ok(employee);
     }
 
     @PostMapping
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-        try {
-            Employee created = employeeService.createEmployee(employee);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Employee created = employeeService.createEmployee(employee);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable String id, @RequestBody Employee employee) {
-        try {
-            Employee updated = employeeService.updateEmployee(id, employee);
-            return ResponseEntity.ok(updated);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Employee updated = employeeService.updateEmployee(id, employee);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable String id) {
-        try {
-            employeeService.deleteEmployee(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/credentials")
+    public ResponseEntity<EmployeeCredentials> getEmployeeCredentials(@PathVariable String id) {
+        EmployeeCredentials credentials = employeeService.getEmployeeCredentials(id);
+        return ResponseEntity.ok(credentials);
+    }
+
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<EmployeeCredentials> resetPassword(@PathVariable String id) {
+        EmployeeCredentials credentials = employeeService.resetPassword(id);
+        return ResponseEntity.ok(credentials);
     }
 }

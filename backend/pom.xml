@@ -11,5 +11,6 @@
         <module>coupon-market-service</module>
         <module>inventory-market-service</module>
         <module>employee-market-service</module>
+        <module>customer-market-service</module>
     </modules>
 </project>

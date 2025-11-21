@@ -43,8 +43,25 @@ api.interceptors.response.use(
       }
     }
 
+    // Cải thiện error message
+    if (error.response) {
+      // Lấy message từ backend response
+      const message = error.response.data?.message || 
+                     error.response.data?.error || 
+                     error.response.statusText ||
+                     'Have an error';
+      
+      // Tạo error object với message rõ ràng
+      const enhancedError = new Error(message);
+      enhancedError.response = error.response;
+      enhancedError.status = error.response.status;
+      
+      return Promise.reject(enhancedError);
+    }
+
     return Promise.reject(error);
   }
 );
+
 
 export default api;

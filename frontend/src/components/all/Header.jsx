@@ -12,6 +12,7 @@ import {
   ArrowRightLeft,
   X,
   LogOut,
+  UserStar,
 } from "lucide-react";
 
 // Simple Header Component
@@ -53,9 +54,28 @@ const Header = ({ currentPage = "pos", menu }) => {
     },
   ];
 
+  const marketingMenu = [
+    {
+      label: "Customer",
+      icon: UserStar,
+      path: "/marketing/customers",
+    },
+    {
+      label: "Coupon",
+      icon: Receipt,
+      path: "/marketing/coupons",
+    },
+    {
+      label: "Report",
+      icon: Package,
+      path: "/marketing/reports",
+    },
+  ];
+
   const menuMap = {
     warehouse: warehouseMenu,
     admin: adminMenu,
+    marketing: marketingMenu,
     // pos: posMenu,
   };
 

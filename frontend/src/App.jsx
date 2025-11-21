@@ -8,6 +8,7 @@ import Catalog from "./pages/warehouse/Catalog";
 import Transaction from "./pages/warehouse/Transaction";
 import TransactionHistory from "./pages/warehouse/TransactionHistory";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
+import Customer from "./pages/marketing/Customer";
 
 function App() {
   return (
@@ -18,6 +19,11 @@ function App() {
         element={<Navigate to="/warehouse/products" />}
       />
       <Route path="/admin" element={<Navigate to="/admin/employees" />} />
+      <Route
+        path="/marketing"
+        element={<Navigate to="/marketing/customers" />}
+      />
+
       <Route path="/home" element={<LoginPage />} />
       <Route
         path="/cash"
@@ -60,10 +66,10 @@ function App() {
         }
       />
       <Route
-        path="/marketing"
+        path="/marketing/customers"
         element={
-          <ProtectedRoute requiredRole="MANAGER">
-            {/* Your admin component */}
+          <ProtectedRoute requiredRole="MARKETING">
+            <Customer />
           </ProtectedRoute>
         }
       />
