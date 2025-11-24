@@ -34,14 +34,14 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.searchByCardNumber(cardNumber));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<CustomerResponse> createCustomer(
             @Valid @RequestBody CustomerRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(customerService.createCustomer(request));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<CustomerResponse> updateCustomer(
             @PathVariable Long id,
             @Valid @RequestBody CustomerRequest request) {

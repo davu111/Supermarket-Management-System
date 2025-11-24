@@ -22,8 +22,7 @@ public class Customer {
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private LocalDate dateOfBirth;
-    private Integer points = 0;
-    @Enumerated(EnumType.STRING)
-    private MembershipTier membershipTier;
+    private Integer rewardPoints = 0;
+    private Integer tierPoints = 0;
     private Boolean active = true;
 }

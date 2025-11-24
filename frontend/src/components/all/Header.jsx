@@ -67,7 +67,7 @@ const Header = ({ currentPage = "pos", menu }) => {
     },
     {
       label: "Report",
-      icon: Package,
+      icon: BarChart3,
       path: "/marketing/reports",
     },
   ];

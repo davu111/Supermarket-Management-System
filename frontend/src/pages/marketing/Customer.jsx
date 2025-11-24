@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
-import { Search, Plus, Edit2, UserX, X } from "lucide-react";
+import { Search, Plus, Edit2, UserX } from "lucide-react";
+import CustomerModal from "../../components/marketing/CutomerModal";
 import axios from "../../contexts/axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Header from "../../components/all/Header";
 
 const Customer = () => {
   const [customers, setCustomers] = useState([]);
@@ -14,8 +18,8 @@ const Customer = () => {
     cardNumber: "",
     gender: "MALE",
     dateOfBirth: "",
-    points: 0,
-    membershipTier: "COPPER",
+    rewardPoints: 0,
+    tierPoints: 100,
   });
 
   useEffect(() => {
@@ -48,28 +52,39 @@ const Customer = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (editingCustomer) {
       // Update existing customer
-      setCustomers((prev) =>
-        prev.map((c) =>
-          c.id === editingCustomer.id
-            ? { ...formData, id: c.id, active: c.active }
-            : c
-        )
-      );
+      try {
+        const response = await axios.put(
+          `/customers/update/${editingCustomer.id}`,
+          formData
+        );
+        setCustomers((prev) =>
+          prev.map((c) =>
+            c.id === editingCustomer.id
+              ? response.data // Dùng data từ backend thay vì formData
+              : c
+          )
+        );
+        toast.success("Customer updated successfully!");
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to update customer!");
+      }
     } else {
       // Add new customer
-      const newCustomer = {
-        ...formData,
-        id: customers.length + 1,
-        active: true,
-      };
-      setCustomers((prev) => [...prev, newCustomer]);
+      try {
+        const response = await axios.post("/customers/create", formData);
+        setCustomers((prev) => [...prev, response.data]); // Dùng data từ backend
+        toast.success("Customer created successfully!");
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to create customer!");
+      }
     }
-
     resetForm();
   };
 
@@ -81,8 +96,8 @@ const Customer = () => {
       cardNumber: customer.cardNumber,
       gender: customer.gender,
       dateOfBirth: customer.dateOfBirth,
-      points: customer.points,
-      membershipTier: customer.membershipTier,
+      rewardPoints: customer.rewardPoints, // Sửa từ points
+      tierPoints: customer.tierPoints, // Thêm tierPoints
     });
     setShowModal(true);
   };
@@ -103,7 +118,7 @@ const Customer = () => {
       gender: "MALE",
       dateOfBirth: "",
       points: 0,
-      membershipTier: "COPPER",
+      tierPoints: 100,
     });
     setEditingCustomer(null);
     setShowModal(false);
@@ -121,290 +136,167 @@ const Customer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">
-              Loyalty Management
-            </h1>
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-            >
-              <Plus size={20} />
-              Add Member
-            </button>
-          </div>
+    <>
+      <Header currentPage="Customer" menu="marketing" />
 
-          <div className="mb-6">
-            <div className="relative">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                size={20}
-              />
-              <input
-                type="text"
-                placeholder="Search by card number..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                    Full Name
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                    Card Code
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                    Gender
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                    Birthday
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                    Point
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                    Tier
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                    Controll
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredCustomers.map((customer) => (
-                  <tr
-                    key={customer.id}
-                    className={`hover:bg-gray-50 ${
-                      !customer.active ? "opacity-50" : ""
-                    }`}
-                  >
-                    <td className="px-4 py-3 text-sm text-gray-800">
-                      {customer.fullName}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {customer.email}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-mono text-gray-800">
-                      {customer.cardNumber}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {customer.gender}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {new Date(customer.dateOfBirth).toLocaleDateString(
-                        "vi-VN"
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-800 font-semibold">
-                      {customer.points}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getTierColor(
-                          customer.membershipTier
-                        )}`}
-                      >
-                        {customer.membershipTier}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          customer.active
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {customer.active ? "Active" : "Disable"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          onClick={() => handleEdit(customer)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                          title="Sửa"
-                        >
-                          <Edit2 size={18} />
-                        </button>
-                        {customer.active && (
-                          <button
-                            onClick={() => handleDeactivate(customer.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                            title="Vô hiệu hóa"
-                          >
-                            <UserX size={18} />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">
-                {editingCustomer ? "Edit Member Information" : "Add New Member"}
-              </h2>
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-3xl font-bold text-gray-800">
+                Loyalty Management
+              </h1>
               <button
-                onClick={resetForm}
-                className="text-gray-500 hover:text-gray-700"
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition cursor-pointer"
               >
-                <X size={24} />
+                <Plus size={20} />
+                Add Member
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
+            <div className="mb-6">
+              <div className="relative">
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Search by card number..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Card number (6 characters)
-                </label>
-                <input
-                  type="text"
-                  name="cardNumber"
-                  value={formData.cardNumber}
-                  onChange={handleInputChange}
-                  maxLength="6"
-                  pattern="[A-Za-z0-9]{6}"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Gender
-                </label>
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="MALE">Male</option>
-                  <option value="FEMALE">Female</option>
-                  <option value="OTHER">Other</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Birthday
-                </label>
-                <input
-                  type="date"
-                  name="dateOfBirth"
-                  value={formData.dateOfBirth}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Point
-                </label>
-                <input
-                  type="number"
-                  name="points"
-                  value={formData.points}
-                  onChange={handleInputChange}
-                  min="0"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tier
-                </label>
-                <select
-                  name="membershipTier"
-                  value={formData.membershipTier}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="COPPER">Copper</option>
-                  <option value="SLIVER">Sliver</option>
-                  <option value="GOLD">Gold</option>
-                  <option value="PLATINUM">Platinum</option>
-                  <option value="DIAMOND">Diamond</option>
-                </select>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium"
-                >
-                  {editingCustomer ? "Update" : "Create"}
-                </button>
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition font-medium"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Full Name
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Email
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Card Code
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Gender
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Birthday
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Reward Points
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Tier Points
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Tier
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
+                      Controll
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {filteredCustomers.map((customer) => (
+                    <tr
+                      key={customer.id}
+                      className={`hover:bg-gray-50 ${
+                        !customer.active ? "opacity-50" : ""
+                      }`}
+                    >
+                      <td className="px-4 py-3 text-sm text-gray-800">
+                        {customer.fullName}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {customer.email}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-mono text-gray-800">
+                        {customer.cardNumber}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {customer.gender}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {new Date(customer.dateOfBirth).toLocaleDateString(
+                          "vi-VN"
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-800 font-semibold">
+                        {customer.rewardPoints}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-800 font-semibold">
+                        {customer.tierPoints}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${getTierColor(
+                            customer.membershipTier
+                          )}`}
+                        >
+                          {customer.membershipTier}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            customer.active
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {customer.active ? "Active" : "Disable"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() => handleEdit(customer)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition cursor-pointer"
+                            title="Edit"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                          {customer.active && (
+                            <button
+                              onClick={() => handleDeactivate(customer.id)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                              title="Disable"
+                            >
+                              <UserX size={18} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      )}
-    </div>
+
+        {showModal && (
+          <CustomerModal
+            editingCustomer={editingCustomer}
+            resetForm={resetForm}
+            handleSubmit={handleSubmit}
+            formData={formData}
+            handleInputChange={handleInputChange}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

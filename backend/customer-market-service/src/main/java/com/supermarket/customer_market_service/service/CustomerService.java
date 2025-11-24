@@ -70,7 +70,7 @@ public class CustomerService {
             throw new RuntimeException("Mã số thẻ đã tồn tại");
         }
 
-        customer = customerMapper.toCustomer(request);
+        customerMapper.updateCustomerFromRequest(request, customer);
 
         Customer updatedCustomer = customerRepository.save(customer);
         return customerMapper.toCustomerResponse(updatedCustomer);

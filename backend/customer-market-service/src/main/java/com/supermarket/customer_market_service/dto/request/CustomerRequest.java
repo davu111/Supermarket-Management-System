@@ -21,7 +21,7 @@ public class CustomerRequest {
     private String email;
 
     @NotBlank(message = "Mã số thẻ không được để trống")
-    @Pattern(regexp = "^[A-Za-z0-9]{6}$", message = "Mã số thẻ phải có đúng 6 ký tự")
+    @Pattern(regexp = "^[A-Za-z0-9]{8}$", message = "Mã số thẻ phải có đúng 8 ký tự")
     private String cardNumber;
 
     @NotNull(message = "Giới tính không được để trống")
@@ -31,10 +31,11 @@ public class CustomerRequest {
     @Past(message = "Ngày sinh phải là ngày trong quá khứ")
     private LocalDate dateOfBirth;
 
-    @NotNull(message = "Điểm không được để trống")
-    @Min(value = 0, message = "Điểm không được âm")
-    private Integer points;
+    @NotNull(message = "Điểm tiêu dùng không được để trống")
+    @Min(value = 0, message = "Điểm tiêu dùng không được âm")
+    private Integer rewardPoints;
 
-    @NotNull(message = "Cấp bậc hội viên không được để trống")
-    private String membershipTier;
+    @NotNull(message = "Điểm cấp bậc không được để trống")
+    @Min(value = 0, message = "Điểm cấp bậc không được âm")
+    private Integer tierPoints;
 }
