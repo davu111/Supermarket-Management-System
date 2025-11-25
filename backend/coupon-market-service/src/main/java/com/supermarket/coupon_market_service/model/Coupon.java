@@ -47,7 +47,6 @@ public class Coupon {
     private Boolean isActive = true;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private Integer priority = 0; // Độ ưu tiên (số càng cao càng ưu tiên)
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

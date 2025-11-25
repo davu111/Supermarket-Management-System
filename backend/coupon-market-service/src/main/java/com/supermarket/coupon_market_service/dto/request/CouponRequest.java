@@ -1,7 +1,6 @@
-package com.supermarket.coupon_market_service.dto.response;
+package com.supermarket.coupon_market_service.dto.request;
 
 import com.supermarket.coupon_market_service.model.CouponType;
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
@@ -10,8 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class CouponResponse {
-    Long id;
+public class CouponRequest {
     CouponType type; // COMBO, TOTAL, HOLIDAY, PRODUCT
     String name;
     String description;

@@ -106,7 +106,7 @@ const Header = ({ currentPage = "pos", menu }) => {
                   key={item.label}
                   onClick={() => handleNavigation(item)}
                   className={`
-                flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-200
+                flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-200 cursor-pointer
                 ${
                   isActive
                     ? "bg-white text-red-600 shadow-md"

@@ -3,13 +3,15 @@ package com.supermarket.coupon_market_service.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supermarket.coupon_market_service.dto.request.ApplyCouponRequest;
+import com.supermarket.coupon_market_service.dto.request.CouponRequest;
 import com.supermarket.coupon_market_service.dto.response.ApplyCouponResponse;
 import com.supermarket.coupon_market_service.dto.response.CouponDetail;
+import com.supermarket.coupon_market_service.dto.response.CouponResponse;
 import com.supermarket.coupon_market_service.dto.response.ProductResponse;
+import com.supermarket.coupon_market_service.mapper.CouponMapper;
 import com.supermarket.coupon_market_service.model.Coupon;
 import com.supermarket.coupon_market_service.model.CouponType;
 import com.supermarket.coupon_market_service.repository.CouponRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -28,12 +30,28 @@ public class CouponService {
 
     private final CouponRepository couponRepository;
     private final ObjectMapper objectMapper;
+    private final CouponMapper couponMapper;
     private final WebClient webClient;
 
-    public CouponService(CouponRepository couponRepository, ObjectMapper objectMapper, WebClient.Builder webClientBuilder) {
+    public CouponService(CouponRepository couponRepository, ObjectMapper objectMapper, CouponMapper couponMapper, WebClient.Builder webClientBuilder) {
         this.couponRepository = couponRepository;
         this.objectMapper = objectMapper;
+        this.couponMapper = couponMapper;
         this.webClient = webClientBuilder.baseUrl("http://localhost:9000/api").build();
+    }
+
+    // GET ALL COUPONS
+    public List<CouponResponse> getAllCoupons() {
+        return couponRepository.findAll().stream()
+                .map(couponMapper::toCouponResponse)
+                .collect(Collectors.toList());
+    }
+
+    // CREATE Coupon
+    public CouponResponse createCoupon(CouponRequest request) {
+        Coupon coupon = couponMapper.toCoupon(request);
+        Coupon savedCoupon = couponRepository.save(coupon);
+        return couponMapper.toCouponResponse(savedCoupon);
     }
 
     public ApplyCouponResponse applyCoupons(ApplyCouponRequest request) {
@@ -113,9 +131,7 @@ public class CouponService {
     private Optional<CouponDetail> findBestComboCoupon(List<ProductResponse> products, List<Coupon> coupons) {
         return coupons.stream()
                 .filter(c -> c.getType() == CouponType.COMBO)
-                .filter(c -> isComboApplicable(products, c))
-                .max(Comparator.comparing(Coupon::getAmount)
-                        .thenComparing(Coupon::getPriority))
+                .filter(c -> isComboApplicable(products, c)).max(Comparator.comparing(Coupon::getAmount))
                 .map(this::toCouponDetail);
     }
 
@@ -148,8 +164,7 @@ public class CouponService {
         return coupons.stream()
                 .filter(c -> c.getType() == CouponType.TOTAL)
                 .filter(c -> isTotalApplicable(totalAmount, c))
-                .max(Comparator.comparing(this::calculateTotalDiscount)
-                        .thenComparing(Coupon::getPriority))
+                .max(Comparator.comparing(this::calculateTotalDiscount))
                 .map(c -> toCouponDetailWithCalculatedAmount(c, totalAmount));
     }
 
@@ -171,9 +186,7 @@ public class CouponService {
         LocalDateTime now = LocalDateTime.now();
         return coupons.stream()
                 .filter(c -> c.getType() == CouponType.HOLIDAY)
-                .filter(c -> isHolidayApplicable(now, c))
-                .max(Comparator.comparing(Coupon::getAmount)
-                        .thenComparing(Coupon::getPriority))
+                .filter(c -> isHolidayApplicable(now, c)).max(Comparator.comparing(Coupon::getAmount))
                 .map(this::toCouponDetail);
     }
 

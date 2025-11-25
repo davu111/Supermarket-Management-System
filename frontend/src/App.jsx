@@ -9,6 +9,7 @@ import Transaction from "./pages/warehouse/Transaction";
 import TransactionHistory from "./pages/warehouse/TransactionHistory";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
 import Customer from "./pages/marketing/Customer";
+import Coupon from "./pages/marketing/Coupon";
 
 function App() {
   return (
@@ -70,6 +71,14 @@ function App() {
         element={
           <ProtectedRoute requiredRole="MARKETING">
             <Customer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/marketing/coupons"
+        element={
+          <ProtectedRoute requiredRole="MARKETING">
+            <Coupon />
           </ProtectedRoute>
         }
       />

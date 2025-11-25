@@ -1,4 +1,12 @@
 package com.supermarket.coupon_market_service.mapper;
 
-public class CouponMapper {
+import com.supermarket.coupon_market_service.dto.request.CouponRequest;
+import com.supermarket.coupon_market_service.dto.response.CouponResponse;
+import com.supermarket.coupon_market_service.model.Coupon;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface CouponMapper {
+    Coupon toCoupon(CouponRequest request);
+    CouponResponse toCouponResponse(Coupon coupon);
 }
