@@ -5,7 +5,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,6 +23,6 @@ public class ProductResponse {
     String categoryId;
     String imageUrl;
 
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+    LocalDate createdAt;
+    LocalDate updatedAt;
 }

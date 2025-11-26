@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -54,6 +54,27 @@ public class CouponService {
         return couponMapper.toCouponResponse(savedCoupon);
     }
 
+    // UPDATE COUPON
+    public CouponResponse updateCoupon(Long id, CouponRequest request) {
+        Optional<Coupon> optionalCoupon = couponRepository.findById(id);
+        if (optionalCoupon.isEmpty()) {
+            throw new NoSuchElementException("Coupon not found with id: " + id);
+        }
+        Coupon existingCoupon = optionalCoupon.get();
+        couponMapper.updateCouponFromRequest(request, existingCoupon);
+        Coupon updatedCoupon = couponRepository.save(existingCoupon);
+        return couponMapper.toCouponResponse(updatedCoupon);
+    }
+
+    // DELETE COUPON
+    public void deleteCoupon(Long id) {
+        if (!couponRepository.existsById(id)) {
+            throw new NoSuchElementException("Coupon not found with id: " + id);
+        }
+        couponRepository.deleteById(id);
+    }
+
+    // APPLY COUPONS
     public ApplyCouponResponse applyCoupons(ApplyCouponRequest request) {
         String tokenValue = getToken();
 
@@ -89,7 +110,7 @@ public class CouponService {
         }
 
         // 3. Lấy tất cả coupon active
-        List<Coupon> activeCoupons = couponRepository.findAllActiveCoupons(LocalDateTime.now());
+        List<Coupon> activeCoupons = couponRepository.findAllActiveCoupons(LocalDate.now());
 
         // 4. Áp dụng logic chọn coupon
         List<CouponDetail> appliedCoupons = new ArrayList<>();
@@ -183,14 +204,14 @@ public class CouponService {
 
     // Tìm coupon HOLIDAY tốt nhất
     private Optional<CouponDetail> findBestHolidayCoupon(List<Coupon> coupons) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         return coupons.stream()
                 .filter(c -> c.getType() == CouponType.HOLIDAY)
                 .filter(c -> isHolidayApplicable(now, c)).max(Comparator.comparing(Coupon::getAmount))
                 .map(this::toCouponDetail);
     }
 
-    private boolean isHolidayApplicable(LocalDateTime now, Coupon coupon) {
+    private boolean isHolidayApplicable(LocalDate now, Coupon coupon) {
         return (coupon.getHolidayStartDate() == null || !now.isBefore(coupon.getHolidayStartDate())) &&
                 (coupon.getHolidayEndDate() == null || !now.isAfter(coupon.getHolidayEndDate()));
     }

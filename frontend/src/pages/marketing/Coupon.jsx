@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, X, Save, Search, Tag } from "lucide-react";
 import axios from "../../contexts/axios";
 import Header from "../../components/all/Header";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Coupon = () => {
   const [coupons, setCoupons] = useState([]);
@@ -29,12 +31,13 @@ const Coupon = () => {
     priority: 0,
   });
 
+  // get coupons
   const fetchCoupons = async () => {
     try {
       const response = await axios.get("/coupons/getAll");
       setCoupons(response.data);
     } catch (error) {
-      console.error("Lỗi khi tải danh sách coupon:", error);
+      console.error("Error fetching coupons:", error);
     }
   };
 
@@ -42,50 +45,45 @@ const Coupon = () => {
     fetchCoupons();
   }, []);
 
+  // create coupon
   const handleCreate = async (data) => {
     try {
-      // const response = await fetch(`${API_BASE_URL}`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data)
-      // });
-      // const newCoupon = await response.json();
-
       const response = await axios.post("/coupons/create", data);
       const newCoupon = response.data;
 
       setCoupons([...coupons, newCoupon]);
+      toast.success("Coupon created successfully!");
     } catch (error) {
-      console.error("Lỗi khi tạo coupon:", error);
+      console.error("Error creating coupon:", error);
+      toast.error("Failed to create coupon!");
     }
   };
 
   // TODO: Thay thế bằng API call: PUT /api/coupons/{id}
   const handleUpdate = async (id, data) => {
     try {
-      // const response = await fetch(`${API_BASE_URL}/${id}`, {
-      //   method: 'PUT',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data)
-      // });
-      // const updatedCoupon = await response.json();
+      const response = await axios.put(`/coupons/update/${id}`, data);
+      const updatedCoupon = response.data;
 
-      setCoupons(coupons.map((c) => (c.id === id ? { ...data, id } : c)));
+      setCoupons(coupons.map((c) => (c.id === id ? updatedCoupon : c)));
+      toast.success("Coupon updated successfully!");
     } catch (error) {
-      console.error("Lỗi khi cập nhật coupon:", error);
+      console.error("Error updating coupon:", error);
+      toast.error("Failed to update coupon!");
     }
   };
 
-  // TODO: Thay thế bằng API call: DELETE /api/coupons/{id}
   const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa coupon này?")) return;
+    if (!window.confirm("Are you sure you want to delete this coupon?")) return;
 
     try {
-      // await fetch(`${API_BASE_URL}/${id}`, { method: 'DELETE' });
+      await axios.delete(`/coupons/delete/${id}`);
 
       setCoupons(coupons.filter((c) => c.id !== id));
+      toast.success("Coupon deleted successfully!");
     } catch (error) {
-      console.error("Lỗi khi xóa coupon:", error);
+      console.error("Error deleting coupon:", error);
+      toast.error("Failed to delete coupon!");
     }
   };
 
@@ -137,7 +135,7 @@ const Coupon = () => {
 
     // Validate theo từng loại coupon
     if (formData.type === "COMBO" && !formData.comboProductCodes.trim()) {
-      alert("Vui lòng nhập mã sản phẩm Combo!");
+      alert("Please enter applicable product codes!");
       return;
     }
 
@@ -145,17 +143,17 @@ const Coupon = () => {
       formData.type === "TOTAL" &&
       (!formData.minOrderAmount || formData.minOrderAmount <= 0)
     ) {
-      alert("Vui lòng nhập giá trị đơn hàng tối thiểu!");
+      alert("Please enter a valid minimum order amount!");
       return;
     }
 
     if (formData.type === "HOLIDAY") {
       if (!formData.holidayCode.trim()) {
-        alert("Vui lòng nhập mã ngày lễ!");
+        alert("Please enter a holiday code!");
         return;
       }
       if (!formData.holidayStartDate || !formData.holidayEndDate) {
-        alert("Vui lòng nhập ngày bắt đầu và kết thúc ngày lễ!");
+        alert("Please select holiday start and end dates!");
         return;
       }
     }
@@ -165,7 +163,9 @@ const Coupon = () => {
       !formData.applicableProductCodes.trim() &&
       !formData.productCodePattern.trim()
     ) {
-      alert("Vui lòng nhập mã sản phẩm hoặc pattern mã sản phẩm!");
+      alert(
+        "Please enter either applicable product codes or a product code pattern!"
+      );
       return;
     }
 
@@ -174,18 +174,18 @@ const Coupon = () => {
       (!formData.amount || formData.amount <= 0) &&
       (!formData.percentageDiscount || formData.percentageDiscount <= 0)
     ) {
-      alert("Vui lòng nhập số tiền giảm giá hoặc phần trăm giảm giá!");
+      alert("Please enter either an amount or a percentage discount!");
       return;
     }
 
     // Validate ngày hiệu lực
     if (!formData.startDate || !formData.endDate) {
-      alert("Vui lòng nhập ngày bắt đầu và kết thúc!");
+      alert("Please select start and end dates!");
       return;
     }
 
     if (new Date(formData.startDate) > new Date(formData.endDate)) {
-      alert("Ngày bắt đầu phải trước ngày kết thúc!");
+      alert("Start date must be before end date!");
       return;
     }
 
@@ -216,10 +216,10 @@ const Coupon = () => {
 
   const getCouponTypeLabel = (type) => {
     const labels = {
-      PRODUCT: "Sản phẩm",
+      PRODUCT: "Product",
       COMBO: "Combo",
-      TOTAL: "Tổng đơn",
-      HOLIDAY: "Ngày lễ",
+      TOTAL: "Total",
+      HOLIDAY: "Holiday",
     };
     return labels[type] || type;
   };
@@ -262,7 +262,7 @@ const Coupon = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
-                  placeholder="Tìm kiếm coupon..."
+                  placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none"
@@ -273,11 +273,11 @@ const Coupon = () => {
                 onChange={(e) => setFilterType(e.target.value)}
                 className="px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none"
               >
-                <option value="ALL">Tất cả loại</option>
-                <option value="PRODUCT">Sản phẩm</option>
+                <option value="ALL">All</option>
+                <option value="PRODUCT">Product</option>
                 <option value="COMBO">Combo</option>
-                <option value="TOTAL">Tổng đơn</option>
-                <option value="HOLIDAY">Ngày lễ</option>
+                <option value="TOTAL">Total</option>
+                <option value="HOLIDAY">Holiday</option>
               </select>
             </div>
           </div>
@@ -311,7 +311,7 @@ const Coupon = () => {
                             : "bg-gray-100 text-gray-800"
                         }`}
                       >
-                        {coupon.isActive ? "Hoạt động" : "Tạm dừng"}
+                        {coupon.isActive ? "Active" : "Inactive"}
                       </span>
                     </div>
 
@@ -325,12 +325,12 @@ const Coupon = () => {
                     <div className="bg-linear-to-r from-red-50 to-orange-50 rounded-lg p-3 mb-4">
                       {coupon.amount > 0 && (
                         <p className="text-red-600 font-bold text-lg">
-                          Giảm {coupon.amount.toLocaleString("vi-VN")}đ
+                          Discount {coupon.amount.toLocaleString("vi-VN")}đ
                         </p>
                       )}
                       {coupon.percentageDiscount > 0 && (
                         <p className="text-red-600 font-bold text-lg">
-                          Giảm {coupon.percentageDiscount}%
+                          Discount {coupon.percentageDiscount}%
                         </p>
                       )}
                     </div>
@@ -338,17 +338,17 @@ const Coupon = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={() => openModal(coupon)}
-                        className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all"
+                        className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all cursor-pointer"
                       >
                         <Edit2 className="w-4 h-4" />
-                        Sửa
+                        Edit
                       </button>
                       <button
                         onClick={() => handleDelete(coupon.id)}
-                        className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg hover:from-red-600 hover:to-red-700 transition-all"
+                        className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg hover:from-red-600 hover:to-red-700 transition-all cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" />
-                        Xóa
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -364,11 +364,11 @@ const Coupon = () => {
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl my-8">
               <div className="bg-linear-to-r from-red-600 to-red-500 text-white p-6 rounded-t-2xl flex justify-between items-center">
                 <h2 className="text-2xl font-bold">
-                  {editingCoupon ? "Chỉnh sửa Coupon" : "Thêm Coupon mới"}
+                  {editingCoupon ? "Edit Coupon" : "Create Coupon"}
                 </h2>
                 <button
                   onClick={closeModal}
-                  className="text-white hover:bg-red-700 p-2 rounded-full transition-all"
+                  className="text-white hover:bg-red-700 p-2 rounded-full transition-all cursor-pointer"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -381,7 +381,7 @@ const Coupon = () => {
                 {/* Loại coupon */}
                 <div className="mb-6">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Loại Coupon *
+                    Coupon Type *
                   </label>
                   <select
                     name="type"
@@ -390,10 +390,10 @@ const Coupon = () => {
                     required
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none"
                   >
-                    <option value="PRODUCT">Sản phẩm</option>
+                    <option value="PRODUCT">Product</option>
                     <option value="COMBO">Combo</option>
-                    <option value="TOTAL">Tổng đơn hàng</option>
-                    <option value="HOLIDAY">Ngày lễ</option>
+                    <option value="TOTAL">Total</option>
+                    <option value="HOLIDAY">Holiday</option>
                   </select>
                 </div>
 
@@ -401,7 +401,7 @@ const Coupon = () => {
                 <div className="mb-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Tên Coupon *
+                      Coupon Name *
                     </label>
                     <input
                       type="text"
@@ -416,7 +416,7 @@ const Coupon = () => {
 
                 <div className="mb-6">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Mô tả
+                    Description
                   </label>
                   <textarea
                     name="description"
@@ -432,7 +432,7 @@ const Coupon = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Giảm số tiền (đ)
+                      Discount amount (đ)
                     </label>
                     <input
                       type="number"
@@ -446,7 +446,7 @@ const Coupon = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Giảm phần trăm (%)
+                      Discount percentage (%)
                     </label>
                     <input
                       type="number"
@@ -465,7 +465,7 @@ const Coupon = () => {
                 {formData.type === "COMBO" && (
                   <div className="mb-6 p-4 bg-purple-50 rounded-lg border-2 border-purple-200">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Mã sản phẩm Combo (phân cách bằng dấu phấy)
+                      Combo product codes (separated by commas)
                     </label>
                     <input
                       type="text"
@@ -482,7 +482,7 @@ const Coupon = () => {
                 {formData.type === "TOTAL" && (
                   <div className="mb-6 p-4 bg-green-50 rounded-lg border-2 border-green-200">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Giá trị đơn hàng tối thiểu (đ)
+                      Minimum order amount (đ)
                     </label>
                     <input
                       type="number"
@@ -501,7 +501,7 @@ const Coupon = () => {
                   <div className="mb-6 p-4 bg-orange-50 rounded-lg border-2 border-orange-200">
                     <div className="mb-4">
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Mã ngày lễ
+                        Holiday code
                       </label>
                       <input
                         type="text"
@@ -516,7 +516,7 @@ const Coupon = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Ngày bắt đầu lễ
+                          Holiday start date
                         </label>
                         <input
                           type="date"
@@ -529,7 +529,7 @@ const Coupon = () => {
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Ngày kết thúc lễ
+                          Holiday end date
                         </label>
                         <input
                           type="date"
@@ -548,7 +548,7 @@ const Coupon = () => {
                   <div className="mb-6 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
                     <div className="mb-4">
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Mã sản phẩm áp dụng (phân cách bằng dấu phấy)
+                        Product code (separated by commas)
                       </label>
                       <input
                         type="text"
@@ -561,7 +561,7 @@ const Coupon = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Pattern mã sản phẩm (Regex)
+                        Product code pattern (separated by commas)
                       </label>
                       <input
                         type="text"
@@ -579,7 +579,7 @@ const Coupon = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Ngày bắt đầu
+                      Start Date
                     </label>
                     <input
                       type="date"
@@ -592,7 +592,7 @@ const Coupon = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Ngày kết thúc
+                      End Date
                     </label>
                     <input
                       type="date"
@@ -616,7 +616,7 @@ const Coupon = () => {
                       className="w-5 h-5 text-red-600 border-2 border-gray-300 rounded focus:ring-red-500"
                     />
                     <span className="text-sm font-semibold text-gray-700">
-                      Kích hoạt coupon
+                      Active
                     </span>
                   </label>
                 </div>
@@ -626,16 +626,16 @@ const Coupon = () => {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all"
+                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all cursor-pointer"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-red-600 to-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-red-700 hover:to-red-600 transition-all shadow-lg"
+                    className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-red-600 to-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-red-700 hover:to-red-600 transition-all shadow-lg cursor-pointer"
                   >
                     <Save className="w-5 h-5" />
-                    {editingCoupon ? "Cập nhật" : "Tạo mới"}
+                    {editingCoupon ? "Update" : "Create"}
                   </button>
                 </div>
               </form>

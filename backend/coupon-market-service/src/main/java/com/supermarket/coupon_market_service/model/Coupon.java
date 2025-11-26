@@ -3,7 +3,7 @@ package com.supermarket.coupon_market_service.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -33,8 +33,8 @@ public class Coupon {
     // Điều kiện áp dụng cho HOLIDAY
     private String holidayCode; // TET, NOEL, etc.
 
-    private LocalDateTime holidayStartDate;
-    private LocalDateTime holidayEndDate;
+    private LocalDate holidayStartDate;
+    private LocalDate holidayEndDate;
 
     // Điều kiện áp dụng cho PRODUCT
     @Column(length = 1000)
@@ -45,21 +45,21 @@ public class Coupon {
 
     // Metadata
     private Boolean isActive = true;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        createdAt = LocalDate.now();
+        updatedAt = LocalDate.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = LocalDate.now();
     }
 }
 

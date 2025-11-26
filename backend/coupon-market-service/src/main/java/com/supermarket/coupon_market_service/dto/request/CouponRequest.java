@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
@@ -19,18 +19,18 @@ public class CouponRequest {
     BigDecimal minOrderAmount; // Tổng đơn hàng tối thiểu
     String holidayCode; // TET, NOEL, etc.
 
-    LocalDateTime holidayStartDate;
-    LocalDateTime holidayEndDate;
+    LocalDate holidayStartDate;
+    LocalDate holidayEndDate;
 
     String applicableProductCodes; // JSON array hoặc comma-separated
 
     String productCodePattern; // Regex pattern: "SUA.*", "BMI.*"
 
     Boolean isActive = true;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
+    LocalDate startDate;
+    LocalDate endDate;
     Integer priority = 0; // Độ ưu tiên (số càng cao càng ưu tiên)
 
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+    LocalDate createdAt;
+    LocalDate updatedAt;
 }
