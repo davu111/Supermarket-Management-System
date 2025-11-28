@@ -127,9 +127,9 @@ const Customer = () => {
   const getTierColor = (tier) => {
     const colors = {
       COPPER: "bg-amber-700 text-white",
-      SLIVER: "bg-gray-400 text-gray-800",
+      SLIVER: "bg-gray-200 text-gray-500",
       GOLD: "bg-yellow-500 text-gray-800",
-      PLATINUM: "bg-slate-300 text-gray-800",
+      PLATINUM: "bg-slate-400 text-gray-800",
       DIAMOND: "bg-blue-500 text-white",
     };
     return colors[tier] || "bg-gray-300 text-gray-800";

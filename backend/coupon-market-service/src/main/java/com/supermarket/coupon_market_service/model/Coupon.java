@@ -14,11 +14,11 @@ public class Coupon {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private CouponType type; // COMBO, TOTAL, HOLIDAY, PRODUCT
+    private CouponType type; // COMBO, TOTAL, HOLIDAY, PRODUCT, CUSTOMER
     private String name;
     private String description;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(precision = 10, scale = 2)
     private BigDecimal amount; // Số tiền giảm giá
 
     @Column(precision = 5, scale = 2)
@@ -32,6 +32,9 @@ public class Coupon {
 
     // Điều kiện áp dụng cho HOLIDAY
     private String holidayCode; // TET, NOEL, etc.
+
+    // Điều kiện áp dụng cho CUSTOMER
+    private String cardPattern;  // Lưu dạng JSON array: ["GCARD*"]
 
     private LocalDate holidayStartDate;
     private LocalDate holidayEndDate;

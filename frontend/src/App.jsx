@@ -24,10 +24,11 @@ function App() {
         path="/marketing"
         element={<Navigate to="/marketing/customers" />}
       />
+      <Route path="/cash" element={<Navigate to="/cash/pos" />} />
 
       <Route path="/home" element={<LoginPage />} />
       <Route
-        path="/cash"
+        path="/cash/pos"
         element={
           <ProtectedRoute requiredRole="CASHIER">
             <POSCheckout />

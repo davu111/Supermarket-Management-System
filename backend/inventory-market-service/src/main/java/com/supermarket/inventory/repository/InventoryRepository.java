@@ -14,21 +14,6 @@ import java.util.Set;
 
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, String> {
-    List<Inventory> findBySourceId(String sourceId);
     List<Inventory> findBySourceType(SourceType sourceType);
-    Optional<Inventory> findBySourceIdAndProductId(String sourceId, String productId);
     Optional<Inventory> findBySourceTypeAndProductId(SourceType sourceType, String productId);
-
-    @Modifying
-    @Query("DELETE FROM Inventory i WHERE i.sourceId = :sourceId AND i.productId IN :productIds")
-    void deleteByProductIdInAndSourceId(List<String> productIds, String sourceId);
-
-    @Modifying
-    @Query("UPDATE Inventory i SET i.quantity = :quantity WHERE i.productId = :productId AND i.sourceId = :sourceId")
-    void updateQuantityByProductIdAndSourceId(@Param("sourceId") String sourceId,
-                                              @Param("productId") String productId,
-                                              @Param("quantity") Double quantity);
-
-    void deleteByProductIdAndSourceId(String productId, String sourceId);
-
 }

@@ -43,12 +43,15 @@ public class CustomerService {
             throw new RuntimeException("Email đã tồn tại");
         }
 
-        if (customerRepository.existsByCardNumber(request.getCardNumber())) {
+        // Clean card number before checking (remove prefix if user accidentally added)
+        String cleanCardNumber = removePrefix(request.getCardNumber());
+        String expectedCardNumber = getTierPrefix(request.getTierPoints()) + cleanCardNumber;
+
+        if (customerRepository.existsByCardNumber(expectedCardNumber)) {
             throw new RuntimeException("Mã số thẻ đã tồn tại");
         }
 
         Customer customer = customerMapper.toCustomer(request);
-
         Customer savedCustomer = customerRepository.save(customer);
         return customerMapper.toCustomerResponse(savedCustomer);
     }
@@ -58,22 +61,40 @@ public class CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng với ID: " + id));
 
-        // Check email uniqueness if changed
         if (!customer.getEmail().equals(request.getEmail()) &&
                 customerRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email đã tồn tại");
         }
 
-        // Check card number uniqueness if changed
-        if (!customer.getCardNumber().equals(request.getCardNumber()) &&
-                customerRepository.existsByCardNumber(request.getCardNumber())) {
+        // Check card number with new tier prefix
+        String cleanCardNumber = removePrefix(request.getCardNumber());
+        String expectedCardNumber = getTierPrefix(request.getTierPoints()) + cleanCardNumber;
+
+        if (!customer.getCardNumber().equals(expectedCardNumber) &&
+                customerRepository.existsByCardNumber(expectedCardNumber)) {
             throw new RuntimeException("Mã số thẻ đã tồn tại");
         }
 
         customerMapper.updateCustomerFromRequest(request, customer);
-
         Customer updatedCustomer = customerRepository.save(customer);
         return customerMapper.toCustomerResponse(updatedCustomer);
+    }
+
+    // Helper methods
+    private String removePrefix(String cardNumber) {
+        if (cardNumber != null && cardNumber.matches("^[DPGSB]CARD.*")) {
+            return cardNumber.substring(1);
+        }
+        return cardNumber;
+    }
+
+    private String getTierPrefix(Integer tierPoints) {
+        if (tierPoints == null) return "C";
+        if (tierPoints >= 500) return "D";
+        if (tierPoints >= 400) return "P";
+        if (tierPoints >= 300) return "G";
+        if (tierPoints >= 200) return "S";
+        return "C";
     }
 
     @Transactional

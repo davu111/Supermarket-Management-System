@@ -20,10 +20,9 @@ public class InventoryController {
 
     @GetMapping({"/getInventory", "/getInventory/{sourceId}"})
     public List<InventoryResponse> getInventory(
-            @PathVariable(required = false) String sourceId,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
-        return inventoryService.getInventoryBySourceId(sourceId, sortBy, direction);
+        return inventoryService.getInventory(sortBy, direction);
     }
 
     @GetMapping("/getInventory/{sourceType}/{productId}")
@@ -31,30 +30,6 @@ public class InventoryController {
             @PathVariable String sourceType,
             @PathVariable String productId) {
         return inventoryService.getQuantityByProductIdAndSourceType(productId, SourceType.valueOf(sourceType));
-    }
-
-    @DeleteMapping("/deleteInventory/{sourceId}")
-    public void deleteInventory(
-            @PathVariable String sourceId,
-            @RequestBody List<ConfirmRequest> listInventoryRequest) {
-        List<String> productIds = listInventoryRequest.stream()
-                .map(ConfirmRequest::getProductId)
-                .toList();
-        inventoryService.deleteInventoryByProductIdAndSourceId(sourceId, productIds);
-    }
-
-    @DeleteMapping("/deleteOneInventory/{sourceId}/{productId}")
-    public void deleteOneInventory(
-            @PathVariable String sourceId,
-            @PathVariable String productId) {
-        inventoryService.deleteOneInventoryByProductIdAndSourceId(sourceId, productId);
-    }
-
-    @PutMapping("/updateInventory/{sourceId}")
-    public void updateInventory(
-            @PathVariable String sourceId,
-            @RequestBody List<ConfirmRequest> listInventoryRequest) {
-        inventoryService.updateInventoryQuantityByProductIdAndSourceId(sourceId, listInventoryRequest);
     }
 
 }

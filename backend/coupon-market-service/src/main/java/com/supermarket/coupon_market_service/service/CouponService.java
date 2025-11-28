@@ -49,6 +49,7 @@ public class CouponService {
 
     // CREATE Coupon
     public CouponResponse createCoupon(CouponRequest request) {
+        System.out.print(request);
         Coupon coupon = couponMapper.toCoupon(request);
         Coupon savedCoupon = couponRepository.save(coupon);
         return couponMapper.toCouponResponse(savedCoupon);
@@ -127,12 +128,17 @@ public class CouponService {
         findBestHolidayCoupon(activeCoupons)
                 .ifPresent(appliedCoupons::add);
 
-        // 4d. PRODUCT - áp dụng TẤT CẢ sản phẩm thỏa mãn
+        // 4d. CUSTOMER - chọn giá trị cao nhất
+        findBestCustomerCoupon(request.getCardNumber(), originalTotal, activeCoupons)
+                .ifPresent(appliedCoupons::add);
+
+        // 4e. PRODUCT - áp dụng TẤT CẢ sản phẩm thỏa mãn (sửa comment từ 4d -> 4e)
         appliedCoupons.addAll(findAllProductCoupons(products, activeCoupons));
 
         // 5. Tính tổng giảm giá và giá cuối cùng
         BigDecimal totalDiscount = appliedCoupons.stream()
                 .map(CouponDetail::getAmount)
+                .filter(Objects::nonNull)     // <— chống null
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal finalTotal = originalTotal.subtract(totalDiscount);
@@ -214,6 +220,56 @@ public class CouponService {
     private boolean isHolidayApplicable(LocalDate now, Coupon coupon) {
         return (coupon.getHolidayStartDate() == null || !now.isBefore(coupon.getHolidayStartDate())) &&
                 (coupon.getHolidayEndDate() == null || !now.isAfter(coupon.getHolidayEndDate()));
+    }
+    // Tìm coupon CUSTOMER tốt nhất
+    private Optional<CouponDetail> findBestCustomerCoupon(String cardNumber, BigDecimal totalAmount, List<Coupon> coupons) {
+        if (cardNumber == null || cardNumber.trim().isEmpty()) {
+            return Optional.empty();
+        }
+
+        return coupons.stream()
+                .filter(c -> c.getType() == CouponType.CUSTOMER)
+                .filter(c -> isCustomerApplicable(cardNumber, totalAmount, c))
+                .max(Comparator.comparing(this::calculateCustomerDiscount))
+                .map(c -> toCouponDetailWithCalculatedAmount(c, totalAmount));
+    }
+
+    private boolean isCustomerApplicable(String cardNumber, BigDecimal totalAmount, Coupon coupon) {
+        try {
+            // Kiểm tra card number có match không
+            List<String> eligibleCards = parseJsonArray(coupon.getCardPattern());
+
+            if (eligibleCards.isEmpty()) return false;
+
+            String normalizedCardNumber = cardNumber.trim().toUpperCase();
+
+            boolean cardMatches = eligibleCards.stream()
+                    .anyMatch(eligibleCard -> {
+                        String normalizedEligible = eligibleCard.trim().toUpperCase();
+                        if (normalizedCardNumber.equals(normalizedEligible)) {
+                            return true;
+                        }
+                        return matchesPattern(normalizedCardNumber, normalizedEligible);
+                    });
+
+            if (!cardMatches) return false;
+
+            // Kiểm tra minimum order amount
+            return coupon.getMinOrderAmount() == null ||
+                    totalAmount.compareTo(coupon.getMinOrderAmount()) >= 0;
+
+        } catch (Exception e) {
+            log.error("Error checking customer applicability", e);
+            return false;
+        }
+    }
+
+    private BigDecimal calculateCustomerDiscount(Coupon coupon) {
+        // Ưu tiên amount cố định, nếu không có thì dùng percentage
+        if (coupon.getAmount() != null && coupon.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+            return coupon.getAmount();
+        }
+        return BigDecimal.ZERO; // Percentage sẽ được tính trong toCouponDetailWithCalculatedAmount
     }
 
     // Tìm TẤT CẢ coupon PRODUCT áp dụng được

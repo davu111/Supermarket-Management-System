@@ -13,12 +13,10 @@ import {
   EyeOff,
 } from "lucide-react";
 import axios from "../../contexts/axios";
-import { useAuth } from "../../contexts/AuthContext";
 
 import Card from "../../components/warehouse/Card";
 import PopUp from "../../components/warehouse/PopUp";
 import AddProductPopup from "../../components/warehouse/AddProductPopup";
-import Item from "../../components/warehouse/Item";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../../components/all/Header";
@@ -30,7 +28,6 @@ function Catalog() {
   const [isDelete, setIsDelete] = useState(false);
   const [isUnDelete, setIsUnDelete] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
-  const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [gridView, setGridView] = useState("large"); // 'large' or 'compact'
@@ -358,7 +355,6 @@ function Catalog() {
         </div>
 
         {/* Modals */}
-        {isOpen && <Item item={item} onClose={() => setIsOpen(false)} />}
 
         {isDelete && (
           <PopUp

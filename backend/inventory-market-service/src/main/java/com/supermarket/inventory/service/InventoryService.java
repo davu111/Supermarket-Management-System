@@ -1,12 +1,10 @@
 package com.supermarket.inventory.service;
 
-import com.supermarket.inventory.dto.request.ConfirmRequest;
 import com.supermarket.inventory.dto.response.*;
 import com.supermarket.inventory.mapper.InventoryMapper;
 import com.supermarket.inventory.model.Inventory;
 import com.supermarket.inventory.model.SourceType;
 import com.supermarket.inventory.repository.InventoryRepository;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,18 +28,14 @@ public class InventoryService {
     }
 
     // GET INVENTORY BY SOURCE ID
-    public List<InventoryResponse> getInventoryBySourceId(String sourceId, String sortBy, String direction) {
+    public List<InventoryResponse> getInventory(String sortBy, String direction) {
         String tokenValue = getToken();
 
         Sort.Direction sortDirection =
                 "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
         List<Inventory> inventories;
 
-        if (sourceId != null) {
-            inventories = inventoryRepository.findBySourceId(sourceId);
-        } else {
-            inventories = inventoryRepository.findBySourceType(SourceType.WAREHOUSE);
-        }
+        inventories = inventoryRepository.findBySourceType(SourceType.WAREHOUSE);
 
         List<InventoryResponse> responses = inventories.stream()
                 .map(inventory -> {
@@ -93,32 +87,6 @@ public class InventoryService {
             tokenValue = null;
         }
         return tokenValue;
-    }
-    // UPDATE INVENTORY QUANTITY BY PRODUCT ID AND SOURCE ID
-    @Transactional
-    public void updateInventoryQuantityByProductIdAndSourceId(String sourceId, List<ConfirmRequest> listInventoryRequest) {
-        log.info(listInventoryRequest.toString());
-        for (ConfirmRequest req : listInventoryRequest) {
-            inventoryRepository.updateQuantityByProductIdAndSourceId(
-                    sourceId,
-                    req.getProductId(),
-                    req.getQuantity()
-            );
-        }
-    }
-
-
-
-    // DELETE INVENTORY BY PRODUCT ID AND SOURCE ID
-    @Transactional
-    public void deleteInventoryByProductIdAndSourceId(String sourceId, List<String> productIds) {
-        inventoryRepository.deleteByProductIdInAndSourceId(productIds, sourceId);
-    }
-
-    // DELETE ONE INVENTORY BY PRODUCT ID AND SOURCE ID
-    @Transactional
-    public void deleteOneInventoryByProductIdAndSourceId(String sourceId, String productId) {
-        inventoryRepository.deleteByProductIdAndSourceId(productId, sourceId);
     }
 
     // GET QUANTITY BY PRODUCT ID AND SOURCE TYPE

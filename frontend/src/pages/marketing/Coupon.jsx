@@ -25,6 +25,7 @@ const Coupon = () => {
     holidayEndDate: "",
     applicableProductCodes: "",
     productCodePattern: "",
+    cardPattern: "",
     isActive: true,
     startDate: "",
     endDate: "",
@@ -116,6 +117,7 @@ const Coupon = () => {
         holidayEndDate: "",
         applicableProductCodes: "",
         productCodePattern: "",
+        cardPattern: "",
         isActive: true,
         startDate: "",
         endDate: "",
@@ -220,6 +222,7 @@ const Coupon = () => {
       COMBO: "Combo",
       TOTAL: "Total",
       HOLIDAY: "Holiday",
+      CUSTOMER: "Customer",
     };
     return labels[type] || type;
   };
@@ -228,8 +231,9 @@ const Coupon = () => {
     const colors = {
       PRODUCT: "bg-blue-100 text-blue-800",
       COMBO: "bg-purple-100 text-purple-800",
-      TOTAL: "bg-green-100 text-green-800",
+      TOTAL: "bg-slate-100 text-slate-800",
       HOLIDAY: "bg-orange-100 text-orange-800",
+      CUSTOMER: "bg-amber-100 text-amber-800",
     };
     return colors[type] || "bg-gray-100 text-gray-800";
   };
@@ -278,6 +282,7 @@ const Coupon = () => {
                 <option value="COMBO">Combo</option>
                 <option value="TOTAL">Total</option>
                 <option value="HOLIDAY">Holiday</option>
+                <option value="CUSTOMER">Customer</option>
               </select>
             </div>
           </div>
@@ -394,6 +399,7 @@ const Coupon = () => {
                     <option value="COMBO">Combo</option>
                     <option value="TOTAL">Total</option>
                     <option value="HOLIDAY">Holiday</option>
+                    <option value="CUSTOMER">Customer</option>
                   </select>
                 </div>
 
@@ -569,6 +575,23 @@ const Coupon = () => {
                         value={formData.productCodePattern}
                         onChange={handleInputChange}
                         placeholder="SUA.*, BMI.*"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                )}
+                {formData.type === "CUSTOMER" && (
+                  <div className="mb-6 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Card pattern (separated by commas)
+                      </label>
+                      <input
+                        type="text"
+                        name="cardPattern"
+                        value={formData.cardPattern}
+                        onChange={handleInputChange}
+                        placeholder="CCARD.*, GCARD.*"
                         className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
                       />
                     </div>

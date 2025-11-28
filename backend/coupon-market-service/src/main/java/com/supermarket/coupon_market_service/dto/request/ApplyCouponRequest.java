@@ -9,4 +9,5 @@ import java.util.List;
 public class ApplyCouponRequest {
     private List<String> productIds;
     private BigDecimal totalAmount; // Optional - có thể tính trong backend
+    private String cardNumber;
 }

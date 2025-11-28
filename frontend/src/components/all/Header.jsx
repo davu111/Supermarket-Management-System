@@ -72,11 +72,19 @@ const Header = ({ currentPage = "pos", menu }) => {
     },
   ];
 
+  const cashMenu = [
+    {
+      label: "POS",
+      icon: ShoppingCart,
+      path: "/cash/pos",
+    },
+  ];
+
   const menuMap = {
     warehouse: warehouseMenu,
     admin: adminMenu,
     marketing: marketingMenu,
-    // pos: posMenu,
+    cash: cashMenu,
   };
 
   const items = menuMap[menu] || [];

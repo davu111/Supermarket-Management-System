@@ -25,6 +25,8 @@ public class CouponRequest {
     String applicableProductCodes; // JSON array hoặc comma-separated
 
     String productCodePattern; // Regex pattern: "SUA.*", "BMI.*"
+    String cardPattern;  // Lưu dạng JSON array: ["GCARD*"]
+
 
     Boolean isActive = true;
     LocalDate startDate;

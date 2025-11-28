@@ -141,7 +141,6 @@ public class InventoryTransactionService {
         return inventoryRepository.findBySourceTypeAndProductId(sourceType, productId)
                 .orElseGet(() -> {
                     Inventory newInventory = new Inventory();
-                    newInventory.setSourceId(null);
                     newInventory.setProductId(productId);
                     newInventory.setSourceType(sourceType);
                     newInventory.setQuantity(0.0);

@@ -1,7 +1,6 @@
 package com.supermarket.coupon_market_service.dto.response;
 
 import com.supermarket.coupon_market_service.model.CouponType;
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
@@ -27,6 +26,7 @@ public class CouponResponse {
     String applicableProductCodes; // JSON array hoặc comma-separated
 
     String productCodePattern; // Regex pattern: "SUA.*", "BMI.*"
+    String cardPattern;  // Lưu dạng JSON array: ["GCARD*"]
 
     Boolean isActive = true;
     LocalDate startDate;

@@ -11,7 +11,7 @@
 	<groupId>com.transportation</groupId>
 	<artifactId>inventory-market-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>inventory-service</name>
+	<name>inventory-market-service</name>
 	<description>InventoryService</description>
 	<url/>
 	<licenses>
