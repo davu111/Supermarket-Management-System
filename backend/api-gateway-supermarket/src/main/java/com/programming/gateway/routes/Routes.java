@@ -68,4 +68,14 @@ public class Routes {
                 })
                 .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> transactionService() {
+        return GatewayRouterFunctions.route("transaction-service")
+                .route(RequestPredicates.path("/api/transactions/**"), HandlerFunctions.http("http://localhost:8086"))
+                .filter((request, next) -> {
+                    return next.handle(request);
+                })
+                .build();
+    }
 }

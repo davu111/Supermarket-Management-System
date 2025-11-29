@@ -59,4 +59,9 @@ public class CustomerController {
         customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/getIdByCardNumber/{cardNumber}")
+    public Long getCustomerIdByCardNumber(@PathVariable String cardNumber) {
+        return customerService.getCustomerIdByCardNumber(cardNumber);
+    }
 }

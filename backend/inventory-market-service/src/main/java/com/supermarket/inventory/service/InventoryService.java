@@ -94,4 +94,15 @@ public class InventoryService {
         Optional<Inventory> inventoryOpt = inventoryRepository.findBySourceTypeAndProductId(sourceType, productId);
         return inventoryOpt.map(Inventory::getQuantity).orElse(0.0);
     }
+
+    // REDUCE INVENTORY QUANTITY BY PRODUCT ID WITH SOURCE TYPE = SHELF
+    public void reduceInventoryQuantity(String productId, Integer quantity) {
+        Inventory inventory = inventoryRepository.findBySourceTypeAndProductId(SourceType.SHELF, productId)
+                .orElseThrow(() -> new NoSuchElementException("Inventory not found for product ID: " + productId + " and source type: SHELF"));
+        if(inventory.getQuantity() < quantity) {
+            throw new IllegalArgumentException("Insufficient inventory for product ID: " + productId);
+        }
+        inventory.setQuantity(inventory.getQuantity() - quantity);
+        inventoryRepository.save(inventory);
+    }
 }

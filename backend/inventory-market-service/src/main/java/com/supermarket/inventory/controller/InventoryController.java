@@ -32,4 +32,12 @@ public class InventoryController {
         return inventoryService.getQuantityByProductIdAndSourceType(productId, SourceType.valueOf(sourceType));
     }
 
+    @PutMapping("/reduceInventory/{productId}")
+    public ResponseEntity<Void> reduceInventory(
+            @PathVariable String productId,
+            @RequestParam Integer quantity) {
+        inventoryService.reduceInventoryQuantity(productId, quantity);
+        return ResponseEntity.ok().build();
+    }
+
 }

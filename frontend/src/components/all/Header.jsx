@@ -13,6 +13,8 @@ import {
   X,
   LogOut,
   UserStar,
+  List,
+  ClipboardClock,
 } from "lucide-react";
 
 // Simple Header Component
@@ -28,6 +30,11 @@ const Header = ({ currentPage = "pos", menu }) => {
       label: "Product",
       icon: ShoppingCart,
       path: "/warehouse/products",
+    },
+    {
+      label: "Category",
+      icon: List,
+      path: "/warehouse/categories",
     },
     {
       label: "Transaction",
@@ -64,6 +71,11 @@ const Header = ({ currentPage = "pos", menu }) => {
       label: "Coupon",
       icon: Receipt,
       path: "/marketing/coupons",
+    },
+    {
+      label: "CustomerHistory",
+      icon: ClipboardClock,
+      path: "/marketing/customerHistory",
     },
     {
       label: "Report",

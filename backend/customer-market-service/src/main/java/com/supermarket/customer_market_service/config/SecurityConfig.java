@@ -28,6 +28,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
+                        .requestMatchers("/api/customers/getIdByCardNumber/**").hasRole("CASHIER")
                         .requestMatchers("/api/customers/**").hasRole("MARKETING")
                         .anyRequest().authenticated()
                 )

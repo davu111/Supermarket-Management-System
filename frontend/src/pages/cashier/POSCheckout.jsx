@@ -128,28 +128,27 @@ const POSCheckout = () => {
 
   const handleCashPayment = () => {
     setPaymentMethod("cash");
-    processPayment("cash", "");
+    processPayment("cash");
   };
 
   const handleQRConfirm = async () => {
     processPayment("qr");
   };
 
-  const processPayment = async (method, customer) => {
-    // API: POST /api/transactions
-    // Body: {
-    //   items: cartItems,
-    //   subtotal: calculateSubtotal(),
-    //   discounts: appliedDiscounts,
-    //   total: getFinalTotal(),
-    //   paymentMethod: method,
-    //   customerName: customer,
-    //   timestamp: new Date()
-    // }
-    // Response: { transactionId, invoiceData }
-
-    setShowQRModal(false);
-    setShowInvoiceModal(true);
+  const processPayment = async (method) => {
+    try {
+      await axios.post("/transactions/create", {
+        items: cartItems,
+        total: appliedDiscounts.finalTotal,
+        paymentMethod: method,
+        cardNumber: cardNumber,
+      });
+      setShowQRModal(false);
+      setShowInvoiceModal(true);
+    } catch (error) {
+      console.error("Error in processing payment:", error);
+      alert("Payment could not be processed. Please try again later!");
+    }
   };
 
   const handleFinish = () => {

@@ -10,6 +10,8 @@ import TransactionHistory from "./pages/warehouse/TransactionHistory";
 import EmployeeManagement from "./pages/admin/EmployeeManagement";
 import Customer from "./pages/marketing/Customer";
 import Coupon from "./pages/marketing/Coupon";
+import Category from "./pages/warehouse/Category";
+import CustomerHistory from "./pages/marketing/CustomerHistory";
 
 function App() {
   return (
@@ -44,6 +46,14 @@ function App() {
         }
       />
       <Route
+        path="/warehouse/categories"
+        element={
+          <ProtectedRoute requiredRole="WAREHOUSE">
+            <Category />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/warehouse/transactions"
         element={
           <ProtectedRoute requiredRole="WAREHOUSE">
@@ -72,6 +82,14 @@ function App() {
         element={
           <ProtectedRoute requiredRole="MARKETING">
             <Customer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/marketing/customerHistory"
+        element={
+          <ProtectedRoute requiredRole="MARKETING">
+            <CustomerHistory />
           </ProtectedRoute>
         }
       />

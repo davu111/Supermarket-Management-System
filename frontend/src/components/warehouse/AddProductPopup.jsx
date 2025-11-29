@@ -36,14 +36,12 @@ function AddProductPopup({
   const [loadingData, setLoadingData] = useState(false);
   const [errors, setErrors] = useState({});
   const [categories, setCategories] = useState([]);
-  const [categoryId, setCategoryId] = useState("");
 
   // Lấy danh sách danh mục
   const fetchCategories = useCallback(async () => {
     try {
       const res = await axios.get(`/categories/all`);
       setCategories(res.data);
-      if (res.data.length > 0) setCategoryId(res.data[0].id);
     } catch (err) {
       console.error("Failed to fetch categories", err);
       toast.error("Failed to load categories");
@@ -76,7 +74,7 @@ function AddProductPopup({
             description: productData.description || "",
             price: productData.price?.toString() || "",
             productCode: productData.productCode || "",
-            categoryId: categoryId || "",
+            categoryId: productData.categoryId || "",
           });
 
           // Load existing image
@@ -101,6 +99,16 @@ function AddProductPopup({
       loadProductData();
     }
   }, [isEditMode, productId, initialData]);
+
+  useEffect(() => {
+    if (categories.length > 0 && !formData.categoryId) {
+      // Chỉ set khi chưa có categoryId (trường hợp tạo mới)
+      setFormData((prev) => ({
+        ...prev,
+        categoryId: categories[0].id,
+      }));
+    }
+  }, [categories, formData.categoryId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -196,7 +204,7 @@ function AddProductPopup({
         description: formData.description.trim(),
         price: parseFloat(formData.price),
         productCode: formData.productCode.trim(),
-        categoryId,
+        categoryId: formData.categoryId,
       };
 
       console.log(productData);
@@ -424,8 +432,13 @@ function AddProductPopup({
                 </label>
                 <div className="relative">
                   <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
+                    value={formData.categoryId}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        categoryId: e.target.value,
+                      }))
+                    }
                     className="w-full appearance-none bg-linear-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-lg px-4 py-3 pr-10 text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 cursor-pointer hover:border-indigo-300"
                   >
                     {categories.map((w) => (

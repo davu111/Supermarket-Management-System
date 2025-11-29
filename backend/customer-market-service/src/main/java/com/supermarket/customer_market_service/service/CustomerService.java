@@ -37,6 +37,12 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
+    public Long getCustomerIdByCardNumber(String cardNumber) {
+        Customer customer = customerRepository.findByCardNumber(cardNumber)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng với mã số thẻ: " + cardNumber));
+        return customer.getId();
+    }
+
     @Transactional
     public CustomerResponse createCustomer(CustomerRequest request) {
         if (customerRepository.existsByEmail(request.getEmail())) {

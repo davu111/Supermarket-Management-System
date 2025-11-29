@@ -24,9 +24,9 @@ import Header from "../../components/all/Header";
 function Catalog() {
   const [Items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [isUnDelete, setIsUnDelete] = useState(false);
+  const [item, setItem] = useState(null);
   const [isUpdate, setIsUpdate] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -265,7 +265,7 @@ function Catalog() {
               </div>
             </div>
           </motion.div>
-          {/* Add Product Button - Admin Only */}
+          {/* Add Product Button*/}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

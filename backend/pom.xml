@@ -12,5 +12,6 @@
         <module>inventory-market-service</module>
         <module>employee-market-service</module>
         <module>customer-market-service</module>
+        <module>transaction-market-service</module>
     </modules>
 </project>
