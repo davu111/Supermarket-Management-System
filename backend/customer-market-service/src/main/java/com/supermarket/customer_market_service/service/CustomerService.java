@@ -43,6 +43,15 @@ public class CustomerService {
         return customer.getId();
     }
 
+    public void addRewardPointsAndTierPoints(Long customerId, Integer rewardPoints, Integer tierPoints) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng với ID: " + customerId));
+
+        customer.setRewardPoints(customer.getRewardPoints() + rewardPoints);
+        customer.setTierPoints(customer.getTierPoints() + tierPoints);
+        customerRepository.save(customer);
+    }
+
     @Transactional
     public CustomerResponse createCustomer(CustomerRequest request) {
         if (customerRepository.existsByEmail(request.getEmail())) {

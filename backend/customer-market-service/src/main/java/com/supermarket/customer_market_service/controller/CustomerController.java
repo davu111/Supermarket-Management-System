@@ -64,4 +64,13 @@ public class CustomerController {
     public Long getCustomerIdByCardNumber(@PathVariable String cardNumber) {
         return customerService.getCustomerIdByCardNumber(cardNumber);
     }
+
+    @PutMapping("/addPoints/{customerId}")
+    public ResponseEntity<Void> AddRewardPointsAndTierPoints(
+            @PathVariable Long customerId,
+            @RequestParam Integer rewardPoints,
+            @RequestParam Integer tierPoints) {
+        customerService.addRewardPointsAndTierPoints(customerId, rewardPoints, tierPoints);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -24,11 +24,17 @@ public class SecurityConfig {
 
     };
 
+    private final String[] MARKETING_ENDPOINT = {
+            "/api/transactions/history/**",
+            "api/transactions/dashboard/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
+                        .requestMatchers(MARKETING_ENDPOINT).hasRole("MARKETING")
                         .requestMatchers("/api/transactions/**").hasRole("CASHIER")
                         .anyRequest().authenticated()
                 )

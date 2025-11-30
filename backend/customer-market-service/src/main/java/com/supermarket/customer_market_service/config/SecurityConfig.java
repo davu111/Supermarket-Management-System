@@ -23,12 +23,17 @@ public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {
     };
 
+    private final String[] CASHIER_ENDPOINT = {
+            "/api/customers/getIdByCardNumber/**",
+            "/api/customers/addPoints/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
-                        .requestMatchers("/api/customers/getIdByCardNumber/**").hasRole("CASHIER")
+                        .requestMatchers(CASHIER_ENDPOINT).hasRole("CASHIER")
                         .requestMatchers("/api/customers/**").hasRole("MARKETING")
                         .anyRequest().authenticated()
                 )

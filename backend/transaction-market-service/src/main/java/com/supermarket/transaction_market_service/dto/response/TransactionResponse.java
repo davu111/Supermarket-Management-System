@@ -5,14 +5,15 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class TransactionResponse {
     Long id;
-
     Long customerId;
     BigDecimal total;
     String paymentMethod;
-    LocalDate createdAt;
+    String createdAt;
+    List<TransactionItemResponse> items;
 }

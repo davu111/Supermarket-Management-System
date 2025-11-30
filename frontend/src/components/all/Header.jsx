@@ -54,11 +54,6 @@ const Header = ({ currentPage = "pos", menu }) => {
       icon: User,
       path: "/admin/employees",
     },
-    {
-      label: "Report",
-      icon: BarChart3,
-      path: "/admin/reports",
-    },
   ];
 
   const marketingMenu = [
@@ -68,14 +63,14 @@ const Header = ({ currentPage = "pos", menu }) => {
       path: "/marketing/customers",
     },
     {
+      label: "History",
+      icon: ClipboardClock,
+      path: "/marketing/customerHistory",
+    },
+    {
       label: "Coupon",
       icon: Receipt,
       path: "/marketing/coupons",
-    },
-    {
-      label: "CustomerHistory",
-      icon: ClipboardClock,
-      path: "/marketing/customerHistory",
     },
     {
       label: "Report",

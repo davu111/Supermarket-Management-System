@@ -4,7 +4,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CustomerTransactionDTO {
+public class CustomerTransactionResponse {
     private Long customerId;
-    private List<TransactionDTO> transactions;
+    private List<TransactionResponse> transactions;
 }

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "../../contexts/axios";
 import {
   Calendar,
-  Package,
   TrendingUp,
   TrendingDown,
   Filter,
@@ -97,15 +96,12 @@ function TransactionHistory() {
   return (
     <>
       <Header currentPage="History" menu="warehouse" />
-      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-red-50 p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-gray-100">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="bg-linear-to-br from-indigo-600 to-purple-600 p-3 rounded-xl shadow-lg">
-                  <Package className="w-8 h-8 text-white" />
-                </div>
                 <div>
                   <h1 className="text-3xl font-bold text-gray-800">
                     Transaction History
@@ -117,7 +113,7 @@ function TransactionHistory() {
               </div>
               <button
                 onClick={fetchTransactions}
-                className="flex items-center gap-2 bg-linear-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 hover:scale-105"
+                className="flex items-center gap-2 bg-linear-to-r from-red-600 to-rose-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 hover:scale-105"
               >
                 <RefreshCw className="w-4 h-4" />
                 Refresh
@@ -140,7 +136,7 @@ function TransactionHistory() {
                       startDate: e.target.value,
                     }))
                   }
-                  className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                  className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none transition-colors"
                 />
               </div>
               <div className="flex flex-col">
@@ -157,13 +153,13 @@ function TransactionHistory() {
                       endDate: e.target.value,
                     }))
                   }
-                  className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                  className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none transition-colors"
                 />
               </div>
               <div className="flex items-end">
                 <button
                   onClick={handleApplyFilter}
-                  className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-xl font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105"
+                  className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-red-600 to-rose-600 text-white px-6 py-2 rounded-xl font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105"
                 >
                   <Filter className="w-4 h-4" />
                   Apply Filter
@@ -175,7 +171,7 @@ function TransactionHistory() {
           {/* Transactions List */}
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
-              <RefreshCw className="w-12 h-12 text-indigo-600 animate-spin mb-4" />
+              <RefreshCw className="w-12 h-12 text-red-600 animate-spin mb-4" />
               <p className="text-gray-500 font-medium">
                 Loading transactions...
               </p>
@@ -197,7 +193,7 @@ function TransactionHistory() {
                       {/* Date Header */}
                       <button
                         onClick={() => toggleDate(date)}
-                        className="w-full bg-linear-to-r from-indigo-600 to-purple-600 p-6 flex items-center justify-between hover:from-indigo-700 hover:to-purple-700 transition-all duration-200"
+                        className="w-full bg-linear-to-r from-red-600 to-rose-600 p-6 flex items-center justify-between hover:from-red-500 hover:to-rose-500 transition-all duration-200"
                       >
                         <div className="flex items-center gap-4 text-white">
                           <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
@@ -274,7 +270,7 @@ function TransactionCard({ transaction, formatTime }) {
   const isExport = transaction.type === "EXPORT";
 
   return (
-    <div className="bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all duration-200 group">
+    <div className="bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-200 group">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3 flex-1">
           <div
@@ -305,7 +301,7 @@ function TransactionCard({ transaction, formatTime }) {
                 )}
                 {transaction.type}
               </span>
-              <span className="text-2xl font-bold bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gray-600 bg-clip-text text-transparent">
                 {transaction.quantity.toFixed(1)} units
               </span>
             </div>
@@ -318,16 +314,6 @@ function TransactionCard({ transaction, formatTime }) {
                   {transaction.productId.slice(0, 8)}
                 </span>
               </div>
-
-              {transaction.orderId && (
-                <div className="flex items-center gap-2 text-gray-600">
-                  <FileText className="w-4 h-4 text-gray-400" />
-                  <span className="font-medium">Order:</span>
-                  <span className="truncate" title={transaction.orderId}>
-                    {transaction.orderId}
-                  </span>
-                </div>
-              )}
 
               <div className="flex items-center gap-2 text-gray-600">
                 <Clock className="w-4 h-4 text-gray-400" />

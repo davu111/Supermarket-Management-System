@@ -58,7 +58,7 @@ function CustomerModal({
             <input
               type="text"
               name="cardNumber"
-              value={formData.cardNumber}
+              value={formData.cardNumber?.slice(0, 8) || ""}
               onChange={handleInputChange}
               maxLength="8"
               pattern="[A-Za-z0-9]{8}"

@@ -142,7 +142,7 @@ function Card({
             className="absolute top-3 left-3 z-10"
           >
             <div className="px-3 py-1.5 bg-linear-to-r from-red-600 to-red-500 text-white font-bold text-sm rounded-full shadow-lg backdrop-blur-sm">
-              ${item.price.toFixed(2)}
+              {item.price.toLocaleString("vi-VN")} đ
             </div>
           </motion.div>
         </div>

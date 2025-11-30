@@ -132,7 +132,7 @@ function Transaction() {
             className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-gray-200"
           >
             {/* Table Header */}
-            <div className="bg-linear-to-r from-indigo-600 to-purple-600 px-6 py-4">
+            <div className="bg-linear-to-r from-red-600 to-rose-600 px-6 py-4">
               <div className="flex items-center gap-3 text-white">
                 <Package className="w-5 h-5" />
                 <h2 className="text-lg font-bold">Inventory</h2>
@@ -143,7 +143,7 @@ function Transaction() {
             </div>
 
             {/* Table Content */}
-            <div className="overflow-x-auto max-h-[calc(100vh-200px)]">
+            <div className="overflow-x-auto max-h-[calc(90vh-200px)]">
               <table className="w-full">
                 <thead className="sticky top-0 bg-linear-to-br from-gray-50 to-gray-100 border-b-2 border-gray-200">
                   <tr>
@@ -180,7 +180,7 @@ function Transaction() {
                     <tr>
                       <td colSpan={cols.length} className="px-6 py-16">
                         <div className="flex flex-col items-center justify-center">
-                          <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mb-3" />
+                          <Loader2 className="w-10 h-10 text-red-600 animate-spin mb-3" />
                           <p className="text-gray-500 font-medium">
                             Loading inventory...
                           </p>
@@ -192,7 +192,7 @@ function Transaction() {
                       <td colSpan={cols.length} className="px-6 py-16">
                         <div className="flex flex-col items-center justify-center">
                           <div className="bg-linear-to-br from-indigo-100 to-purple-100 rounded-full p-6 mb-4">
-                            <Package className="w-12 h-12 text-indigo-600" />
+                            <Package className="w-12 h-12 text-red-600" />
                           </div>
                           <p className="text-gray-500 font-medium text-lg">
                             No products found
@@ -212,11 +212,11 @@ function Transaction() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: 20 }}
                           transition={{ delay: index * 0.05 }}
-                          className="hover:bg-linear-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200 group"
+                          className="hover:bg-linear-to-r hover:from-rose-50 hover:to-rose-50 transition-all duration-200 group"
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <span className="text-sm font-mono font-semibold text-indigo-600 group-hover:text-indigo-700">
+                              <span className="text-sm font-mono font-semibold text-rose-500 group-hover:text-rose-700">
                                 {product.productId}
                               </span>
                             </div>
@@ -227,8 +227,8 @@ function Transaction() {
                             </span>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="inline-flex items-center bg-linear-to-r from-indigo-100 to-purple-100 px-3 py-1 rounded-full">
-                              <span className="text-sm font-bold text-indigo-700">
+                            <div className="inline-flex items-center bg-linear-to-r from-red-100 to-rose-100 px-3 py-1 rounded-full">
+                              <span className="text-sm font-bold text-rose-700">
                                 {product.quantity || 0}
                               </span>
                             </div>

@@ -157,6 +157,7 @@ const POSCheckout = () => {
     setCartItems([]);
     setAppliedDiscounts([]);
     setPaymentMethod("");
+    setCardNumber("");
     inputRef.current?.focus();
   };
 

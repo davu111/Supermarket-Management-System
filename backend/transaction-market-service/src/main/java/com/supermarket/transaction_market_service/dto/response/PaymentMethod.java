@@ -1,4 +1,4 @@
-package com.supermarket.transaction_market_service.dto.request;
+package com.supermarket.transaction_market_service.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-class PaymentMethod {
+public class PaymentMethod {
     private String name; // "Cash", "QR"
     private Long count;
 }
