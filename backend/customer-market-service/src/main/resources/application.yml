@@ -3,9 +3,9 @@ spring:
     name: customer_market_service
   datasource:
     name: customer_service
-    url: jdbc:mysql://localhost:3336/customer_market_service
-    username: root
-    password: mysql
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -18,7 +18,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8181/realms/supermarket-management-system
-          jwk-set-uri: http://localhost:8181/realms/supermarket-management-system/protocol/openid-connect/certs
+          issuer-uri: ${OAUTH2_ISSUER_URI}
+          jwk-set-uri: ${OAUTH2_JWK_SET_URI}
 server:
   port: 8085
