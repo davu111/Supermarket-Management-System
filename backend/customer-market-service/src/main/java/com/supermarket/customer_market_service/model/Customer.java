@@ -2,22 +2,18 @@ package com.supermarket.customer_market_service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)  // Include parent fields trong equals/hashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Customer extends User{
     private String fullName;
-    private String email;
     private String cardNumber;
     @Enumerated(EnumType.STRING)
     private Gender gender;

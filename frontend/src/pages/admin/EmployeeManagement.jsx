@@ -60,6 +60,7 @@ const EmployeeManagement = () => {
     setLoading(true);
     try {
       const response = await axios.get("/employees");
+      console.log(response.data);
       setEmployees(response.data);
     } catch (error) {
       showToast(
