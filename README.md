@@ -68,3 +68,38 @@ Set environment variables before running:
 - `OAUTH2_ISSUER_URI` - Keycloak issuer
 - `OAUTH2_JWK_SET_URI` - JWT validation endpoint
 - `FRONTEND_URL` - Frontend application URL
+
+## Preview of this website:
+
+- Point of Sale
+<p align="center">
+  <img src="preview/Point_of_Sale.png" width="500" alt="Logo GitHub" />
+</p>
+- Product Management
+<p align="center">
+  <img src="preview/Product_Management.png" width="500" alt="Logo GitHub" />
+</p>
+- Warehouse Transaction History
+<p align="center">
+  <img src="preview/Warehouse_Transaction_History.png" width="500" alt="Logo GitHub" />
+</p>
+- Loyaty Customer Management
+<p align="center">
+  <img src="preview/Loyaty_Customer_Management.png" width="500" alt="Logo GitHub" />
+</p>
+- Customer Transaction History
+<p align="center">
+  <img src="preview/Customer_Transaction_History.png" width="500" alt="Logo GitHub" />
+</p>
+- Coupon Management
+<p align="center">
+  <img src="preview/Coupon_Management.png" width="500" alt="Logo GitHub" />
+</p>
+- Sales Report Dashboard
+<p align="center">
+  <img src="preview/Sales_Report_Dashboard.png" width="500" alt="Logo GitHub" />
+</p>
+- Employe Management
+<p align="center">
+  <img src="preview/Employe_Management.png" width="500" alt="Logo GitHub" />
+</p>
